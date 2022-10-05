@@ -4,9 +4,10 @@ import RenderLengthContainer from "./containers/RenderLengthContainer";
 import RenderHRDiagramContainer from "./containers/RenderHRDiagramContainer";
 
 export default function App() {
-  let syncId = 'id';
+  let syncId = null;
   return (<div>
     <RenderMassContainer syncId={syncId} />
+    <br />
     <RenderLengthContainer syncId={syncId} />
     <br />
     <RenderHRDiagramContainer syncId={syncId} />

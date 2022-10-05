@@ -12,9 +12,11 @@ import {
   ReferenceArea
 } from "recharts";
 import propTypes from 'prop-types';
+
 const scale = num => {
   return num.toExponential();
 }
+
 const strokeStyle = {
   semimajor: { stroke: 'black', strokeWidth: '2' },
   periapsis: { stroke: 'black', strokeWidth: '2', strokeDasharray: "5 5" },
@@ -24,34 +26,51 @@ const strokeStyle = {
   roche_radius_2: { stroke: 'blue', strokeDasharray: "5 5", strokeWidth: '2' },
 };
 
+const xDomain = ['auto', dataMax => (dataMax * 1.1)];
+const yDomain = ['auto', 'dataMax+1000'];
+
+//zoom-in
+const getAxisYDomainOneDataset = (refData, ref, offset) => {
+  let [bottom, top] = [refData[0][ref], refData[0][ref]];
+  refData.forEach((d) => {
+    if (d[ref] > top) top = d[ref];
+    if (d[ref] < bottom) bottom = d[ref];
+  });
+  //return [(bottom | 0) - offset, (top | 0) + offset];
+  return [bottom - offset, top + offset];
+};
+
+const getAxisYDomain = (data, from, to, datakeys, offset) => {
+  let mins = [];
+  let maxes = [];
+  const refData = data.slice(from - 1, to);
+  Object.values(datakeys).forEach(ref => {
+    let [min, max] = getAxisYDomainOneDataset(refData, ref, offset);
+    mins.push(min);
+    maxes.push(max);
+  })
+  return [Math.min(...mins), Math.max(...maxes)];
+};
+
+const initialState = {
+  left: xDomain[0],
+  right: xDomain[1],
+  refAreaLeft: '',
+  refAreaRight: '',
+  bottom: yDomain[0],
+  top: yDomain[1],
+  animation: true,
+};
+
+
 
 export default class RenderLength extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.initialState;
+    this.state = initialState;
+    this.state.data = this.props.data;
   }
-  initialState = {
-    data: this.props.data,
-    left: 'dataMin',
-    right: 'dataMax',
-    refAreaLeft: '',
-    refAreaRight: '',
-    top: 'dataMax+1',
-    bottom: 'dataMin-1',
-    top2: 'dataMax+20',
-    bottom2: 'dataMin-20',
-    animation: true,
-  };
-  getAxisYDomain = (from, to, ref, offset) => {
-    const refData = this.props.data.slice(from - 1, to);
-    let [bottom, top] = [refData[0][ref], refData[0][ref]];
-    refData.forEach((d) => {
-      if (d[ref] > top) top = d[ref];
-      if (d[ref] < bottom) bottom = d[ref];
-    });
 
-    return [(bottom | 0) - offset, (top | 0) + offset];
-  };
 
   drawLine(dataKey, alias = null, style, type = null, dot = false) {
     if (dataKey === 'time') return;
@@ -63,9 +82,11 @@ export default class RenderLength extends React.Component {
     />);
     //{...(stroke?{stroke:stroke}:{})}
   }
+
   zoom() {
     let { refAreaLeft, refAreaRight } = this.state;
     const { data } = this.state;
+    const { datakeys } = this.props;
 
     if (refAreaLeft === refAreaRight || refAreaRight === '') {
       this.setState(() => ({
@@ -79,8 +100,7 @@ export default class RenderLength extends React.Component {
     if (refAreaLeft > refAreaRight) [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft];
 
     // yAxis domain
-    const [bottom, top] = this.getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
-    const [bottom2, top2] = this.getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
+    const [bottom, top] = getAxisYDomain(data, refAreaLeft, refAreaRight, datakeys, 10);
 
     this.setState(() => ({
       refAreaLeft: '',
@@ -88,30 +108,30 @@ export default class RenderLength extends React.Component {
       data: data.slice(),
       left: refAreaLeft,
       right: refAreaRight,
-      bottom,
-      top,
-      bottom2,
-      top2,
+      bottom: bottom,
+      top: top,
     }));
   }
 
   zoomOut() {
-    const { data } = this.state;
+    const { data } = this.props;
     this.setState(() => ({
-      data: data.slice(),
+      data: [...data],
+      left: xDomain[0],
+      right: xDomain[1],
       refAreaLeft: '',
       refAreaRight: '',
-      left: 'dataMin',
-      right: 'dataMax',
-      top: 'dataMax+1',
-      bottom: 'dataMin',
-      top2: 'dataMax+50',
-      bottom2: 'dataMin+50',
+      bottom: yDomain[0],
+      top: yDomain[1],
     }));
+
   }
 
+
   render() {
-    const { data, datakeys, type, stroke, dot, divStyle, yAxisProps, syncId } = this.props;
+    const { datakeys, type, stroke, dot, divStyle, syncId } = this.props;
+    const { data, left, right, refAreaLeft, refAreaRight, top, bottom } = this.state;
+
     return (<div style={divStyle || {
       width: "800px",
       height: "400px",
@@ -120,6 +140,7 @@ export default class RenderLength extends React.Component {
       <button type="button" className="btn update" onClick={this.zoomOut.bind(this)}>
         Zoom Out
       </button>
+
       <ResponsiveContainer width="100%"
         height="100%">
         <LineChart
@@ -141,22 +162,28 @@ export default class RenderLength extends React.Component {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
+            allowDataOverflow
+
             type="number"
             scale='time'
-            domain={['auto', dataMax => (dataMax * 1.1)]}
+            domain={[left, right]}
             dataKey="time" padding={{ bottom: 10 }} unit="Myr" tickFormatter={f => f.toFixed(2)}>
             <Label value="Time" position="bottom" offset={0} />
           </XAxis>
-          <YAxis scale='log'
+          <YAxis
+            allowDataOverflow
+            scale='log'
             tickFormatter={scale}
-            domain={['auto', 'dataMax+1000']}
+            domain={[bottom, top]}
             label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
           <Tooltip />
           <Legend wrapperStyle={{ paddingBottom: "20px" }} layout="vertical" align="right" verticalAlign="top" />
           {Object.keys(datakeys).map((key) => { return this.drawLine(key, datakeys[key], strokeStyle[key]) })}
-          {this.state.refAreaLeft && this.state.refAreaRight ? (
-              <ReferenceArea yAxisId="1" x1={this.state.refAreaLeft} x2={this.state.refAreaRight} strokeOpacity={0.3} />
-            ) : null}
+          {refAreaLeft && refAreaRight ? (
+            <ReferenceArea x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
+          ) : null}
+
+
         </LineChart>
       </ResponsiveContainer>
     </div>);
