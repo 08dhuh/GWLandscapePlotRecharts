@@ -24,7 +24,7 @@ const strokeStyle = {
 };
 
 const xDomain = ['auto', dataMax => (dataMax * 1.1)];
-const yDomain = ['auto', 'auto'];
+const yDomain = ['auto', 'dataMax' ];
 
 //zoom-in
 const getAxisYDomainOneDataset = (refData, ref, offset) => {
@@ -160,17 +160,21 @@ export default class RenderMass extends React.Component {
             scale='time'
             domain={[left, right]}
             dataKey="time"
-            padding={{ bottom: 10 }}
-            unit="Myr"
+            padding={{left:20}}
+            unit=""
             tickFormatter={f => f.toFixed(2)}>
             <Label value="Time" position="bottom" offset={0} />
           </XAxis>
           <YAxis
             allowDataOverflow
             label={{ value: `Mass/M_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
-            domain={[bottom, top]} />
-          <Tooltip allowEscapeViewBox={{ x: false, y: false }} />
-          <Legend layout="vertical" align="right" verticalAlign="top" wrapperStyle={{ paddingBottom: "10px" }} />
+            domain={[bottom, top]} 
+            padding={{ bottom: 5, left:10 }}/>
+          <Tooltip 
+          allowEscapeViewBox={{ x: false, y: false }} 
+          //position={{ x: 760, y: 10 }}
+          filterNull={false}/>
+          <Legend layout="vertical" align="right" verticalAlign="top" />
           {Object.keys(datakeys).map((key) => { return this.drawLine(key, datakeys[key], strokeStyle[key]) })}
           {refAreaLeft && refAreaRight ? (
             <ReferenceArea x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
@@ -182,7 +186,7 @@ export default class RenderMass extends React.Component {
     </div>);
   }
 }
-
+//<Legend layout="vertical" align="right" verticalAlign="top" wrapperStyle={{ paddingBottom: "10px" }} />
 RenderMass.propTypes = {
   data: propTypes.array.isRequired,
   datakeys: propTypes.object.isRequired,

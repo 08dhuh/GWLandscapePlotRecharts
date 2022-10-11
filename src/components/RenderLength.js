@@ -133,7 +133,7 @@ export default class RenderLength extends React.Component {
     const { data, left, right, refAreaLeft, refAreaRight, top, bottom } = this.state;
 
     return (<div style={divStyle || {
-      width: "800px",
+      width: "823px",
       height: "400px",
       backgroundColor: "white"
     }}>
@@ -163,11 +163,12 @@ export default class RenderLength extends React.Component {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             allowDataOverflow
-
+            name="time"
             type="number"
             scale='time'
             domain={[left, right]}
-            dataKey="time" padding={{ bottom: 10 }} unit="Myr" tickFormatter={f => f.toFixed(2)}>
+            padding={{left:20}}
+            dataKey="time" unit="" tickFormatter={f => f.toFixed(2)}>
             <Label value="Time" position="bottom" offset={0} />
           </XAxis>
           <YAxis
@@ -175,21 +176,25 @@ export default class RenderLength extends React.Component {
             scale='log'
             tickFormatter={scale}
             domain={[bottom, top]}
-            label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
-          <Tooltip />
-          <Legend wrapperStyle={{ paddingBottom: "20px" }} layout="vertical" align="right" verticalAlign="top" />
+            padding={{ bottom: 5 }}
+            label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' ,offset:-5}} />
+          <Tooltip formatter={(value, name) => {
+            //console.log(value,name);
+            if (name === 'time') { return [`${value} Myr`, name]; }
+            return [value, name];
+          }} 
+          position={{}}/>
+          <Legend layout="vertical" align="right" verticalAlign="top" />          
           {Object.keys(datakeys).map((key) => { return this.drawLine(key, datakeys[key], strokeStyle[key]) })}
           {refAreaLeft && refAreaRight ? (
             <ReferenceArea x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
           ) : null}
-
-
         </LineChart>
       </ResponsiveContainer>
     </div>);
   }
 }
-
+//<Legend wrapperStyle={{ paddingBottom: "20px" }} layout="vertical" align="right" verticalAlign="top" />
 RenderLength.propTypes = {
   data: propTypes.array.isRequired,
   datakeys: propTypes.object.isRequired,
