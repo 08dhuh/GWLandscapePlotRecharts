@@ -1,7 +1,17 @@
 import React from "react";
-import { hrattr } from "../data/dataset";
+//import { hrattr } from "../data/dataset";
 import propTypes from "prop-types";
-import RenderHRDiagram from "../components/RenderHRDiagram";
+import RenderHRDiagram from "../obsolete-components/RenderHRDiagram";
+
+import data from "../data/data.json";
+
+const hrattr = {
+    teff_1 : data.teff_1,
+    teff_2 : data.teff_2,
+    luminosity_1: data.luminosity_1,
+    luminosity_2: data.luminosity_2,
+    time: data.time
+}
 
 const aliases = {
     teff_1 : 'Temperature',

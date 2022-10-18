@@ -1,6 +1,6 @@
 import React from "react";
 import { length } from "../data/dataset";
-import RenderLength from "../components/RenderLength";
+import RenderLength from "../obsolete-components/RenderLength";
 import { mapRechartData } from "./RenderMassContainer";
 import propTypes from 'prop-types';
 

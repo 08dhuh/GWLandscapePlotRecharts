@@ -1,7 +1,7 @@
 import React from "react";
-import RenderMassContainer from "./containers/RenderMassContainer";
-import RenderLengthContainer from "./containers/RenderLengthContainer";
-import RenderHRDiagramContainer from "./containers/RenderHRDiagramContainer";
+import RenderMassContainer from "./components/RenderMassContainer";
+import RenderLengthContainer from "./components/RenderLengthContainer";
+import RenderHRDiagramContainer from "./components/RenderHRDiagramContainer";
 
 export default function App() {
   let syncId = 'null';
