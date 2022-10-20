@@ -1,17 +1,16 @@
 import React from "react";
-//import { hrattr } from "../data/dataset";
+import { hrattr, mapScatterData } from "./DataUtil";
 import propTypes from "prop-types";
-import RenderHRDiagram from "../obsolete-components/RenderHRDiagram";
+import RenderHRDiagram from "./RenderHRDiagram";
+// import data from "../data/data.json";
 
-import data from "../data/data.json";
-
-const hrattr = {
-    teff_1 : data.teff_1,
-    teff_2 : data.teff_2,
-    luminosity_1: data.luminosity_1,
-    luminosity_2: data.luminosity_2,
-    time: data.time
-}
+// const hrattr = {
+//     teff_1 : data.teff_1,
+//     teff_2 : data.teff_2,
+//     luminosity_1: data.luminosity_1,
+//     luminosity_2: data.luminosity_2,
+//     time: data.time
+// }
 
 const aliases = {
     teff_1 : 'Temperature',
@@ -21,24 +20,24 @@ const aliases = {
     //time: 'time'
 }
 
-const mapRechartData = (dataset, aliases) => {
-    let data1=[];
-    let data2=[];
-    let objkeys = Object.keys(aliases);
-    dataset.time.forEach((t,i) => {
-        let obj1 = {time: t};
-        let obj2 = {time: t}
-        objkeys.forEach(key=> {
-            let datakey = aliases[key];
-            key.includes('1') ? obj1[datakey] = dataset[key][i] : obj2[datakey] = dataset[key][i];
-        });
-        data1.push(obj1);
-        data2.push(obj2);
-    });
-    return [data1, data2];
-}
+// const mapRechartData = (dataset, aliases) => {
+//     let data1=[];
+//     let data2=[];
+//     let objkeys = Object.keys(aliases);
+//     dataset.time.forEach((t,i) => {
+//         let obj1 = {time: t};
+//         let obj2 = {time: t}
+//         objkeys.forEach(key=> {
+//             let datakey = aliases[key];
+//             key.includes('1') ? obj1[datakey] = dataset[key][i] : obj2[datakey] = dataset[key][i];
+//         });
+//         data1.push(obj1);
+//         data2.push(obj2);
+//     });
+//     return [data1, data2];
+// }
 
-const [data1, data2] = mapRechartData(hrattr, aliases);
+const [data1, data2] = mapScatterData(hrattr, aliases);
 
 export default class RenderHRDiagramContainer extends React.Component {
     constructor(props) {

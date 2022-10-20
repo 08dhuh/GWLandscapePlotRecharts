@@ -1,7 +1,8 @@
 import React from "react";
-import { length } from "../data/dataset";
-import RenderLength from "../obsolete-components/RenderLength";
-import { mapRechartData } from "./RenderMassContainer";
+//import { length } from "../data/dataset";
+import RenderLength from "./RenderLength";
+import { length, mapLineData } from "./DataUtil";
+// import { mapRechartData } from "./RenderMassContainer";
 import propTypes from 'prop-types';
 
 const aliases = {
@@ -19,7 +20,7 @@ export default class RenderLengthContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: mapRechartData(length),// aliases),
+            data: mapLineData(length),// aliases),
             datakeys: aliases
         };
     }

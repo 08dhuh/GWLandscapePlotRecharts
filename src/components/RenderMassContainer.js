@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { mass } from "../data/dataset";
+import { mapLineData } from "./DataUtil";
+import {mass} from "../data/dataset";
 //import RenderMass from "../obsolete-components/RenderMass";
 import propTypes from 'prop-types';
 import {
@@ -26,22 +27,22 @@ const aliases = {
     time: 'time',
 };
 
-export const mapRechartData = (dataset, keys = null) => {
-    let data = [];
-    dataset.time.forEach((_, i) => {
-        let obj = {};
-        let objkeys = keys ? Object.keys(keys) : Object.keys(dataset);
-        objkeys.forEach(key => { keys ? obj[keys[key]] = dataset[key][i] : obj[key] = dataset[key][i] });
-        data.push(obj);
-    });
-    return data;
-}
+// export const mapRechartData = (dataset, keys = null) => {
+//     let data = [];
+//     dataset.time.forEach((_, i) => {
+//         let obj = {};
+//         let objkeys = keys ? Object.keys(keys) : Object.keys(dataset);
+//         objkeys.forEach(key => { keys ? obj[keys[key]] = dataset[key][i] : obj[key] = dataset[key][i] });
+//         data.push(obj);
+//     });
+//     return data;
+// }
 
 export default class RenderMassContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: mapRechartData(mass),//, aliases),
+            data: mapLineData(mass),//, aliases),
             datakeys: aliases
         };
     }
@@ -71,6 +72,8 @@ const strokeStyle = {
   const xDomain = ['auto', dataMax => (dataMax * 1.1)];
   const yDomain = ['auto', 'dataMax' ];
   
+  //const initialState = {x1: xDomain[0], x2: xDomain[1], y1: yDomain[0], y2: yDomain[1]};
+
   //zoom-in
   const getAxisYDomainOneDataset = (refData, ref, offset) => {
     let [bottom, top] = [refData[0][ref], refData[0][ref]];

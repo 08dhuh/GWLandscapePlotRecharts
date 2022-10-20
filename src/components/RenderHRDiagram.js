@@ -15,6 +15,7 @@ import {
     ReferenceArea
 } from "recharts";
 import propTypes from 'prop-types';
+import { filterData } from "./Utils";
 
 const scale = num => {
     return num.toExponential();
@@ -35,20 +36,18 @@ const initialState = {
 };
 
 export default function RenderHRDiagram(props) {
-    const { divStyle, syncId } = props;
-    const [data1, setData1] = useState([...props.data1]);
-    const [data2, setData2] = useState([...props.data2]);
+    const { divStyle, syncId, data1, data2 } = props;
     const [filteredData1, setFilteredData1] = useState([...data1]);
     const [filteredData2, setFilteredData2] = useState([...data2]);
     const [zoomArea, setZoomArea] = useState(DEFAULT_ZOOM);
     const [isZooming, setIsZooming] = useState(false);
-    const isZoomed =  filteredData1?.length !== data1?.length || filteredData2?.length !== data2?.length;
+    const isZoomed = filteredData1?.length !== data1?.length || filteredData2?.length !== data2?.length;
     //const {left, right, top, bottom} = initialState;
     const [left, setLeft] = useState(initialState.left);
     const [right, setRight] = useState(initialState.right);
     const [top, setTop] = useState(initialState.top);
     const [bottom, setBottom] = useState(initialState.bottom);
-    //const [isDrag, setIsDrag] = useState(false);
+
 
     const showZoomBox =
         isZooming &&
@@ -59,7 +58,6 @@ export default function RenderHRDiagram(props) {
         setFilteredData1([...data1]);
         setFilteredData2([...data2]);
         setZoomArea(DEFAULT_ZOOM);
-        const { x1, y1, x2, y2 } = zoomArea;
         setLeft(initialState.left);
         setRight(initialState.right);
         setTop(initialState.top);
@@ -72,50 +70,62 @@ export default function RenderHRDiagram(props) {
         setIsZooming(true);
         setZoomArea({ x1: xValue, y1: yValue, x2: xValue, y2: yValue });
         //comment out after testing
-        console.log("handleMouseDown called");
-        console.log(xValue, yValue);
+        // console.log("handleMouseDown called");
+        // console.log(xValue, yValue);
     };
 
     const handleMouseMove = e => {
-        if (!isZooming) return;
-        //setIsDrag(true);
-        setZoomArea((prev) => ({ ...prev, x2: e?.xValue, y2: e?.yValue }));
-        //console.log("handleMouseMove called");
-        //console.log(e.xValue, e.yValue);
+        if (isZooming) {
+            setZoomArea((prev) => ({ ...prev, x2: e?.xValue, y2: e?.yValue }));
+        }
     };
 
     const handleMouseUp = e => {
-        if (!isZooming) return;
-        setIsZooming(false);
-        //setIsDrag(false);
-        console.log("handleMouseUp called");
-        let { x1, y1, x2, y2 } = zoomArea;
-        setZoomArea(DEFAULT_ZOOM);
-        // ensure x1 <= x2 and y1 <= y2
-        if (x1 > x2) [x1, x2] = [x2, x1];
-        if (y1 > y2) [y1, y2] = [y2, y1];
-
-        if (x2 - x1 < MIN_ZOOM || y2 - y1 < MIN_ZOOM) {
-            console.log("zoom cancel");
-        } else {
-            // console.log("zoom stop");
-            const dataPointsInRange1 = filteredData1.filter(
-                (d) => d['Temperature'] >= x1 && d['Temperature'] <= x2 && d['Luminosity'] >= y1 && d['Luminosity'] <= y2
-            );
-            const dataPointsInRange2 = filteredData2.filter(
-                (d) => d['Temperature'] >= x1 && d['Temperature'] <= x2 && d['Luminosity'] >= y1 && d['Luminosity'] <= y2
-            );
-            console.log(dataPointsInRange1.length, dataPointsInRange2.length);
-            setLeft(x1);
-            setRight(x2);
-            setTop(y2);
-            setBottom(y1);
-            setFilteredData1(dataPointsInRange1);
-            setFilteredData2(dataPointsInRange2);
+        if (isZooming) {
+            console.log("handleMouseUp called");
+            let { x1, y1, x2, y2 } = zoomArea;
+            setIsZooming(false);
             setZoomArea(DEFAULT_ZOOM);
-        }
-    }
+            // ensure x1 <= x2 and y1 <= y2
+            if (x1 > x2) [x1, x2] = [x2, x1];
+            if (y1 > y2) [y1, y2] = [y2, y1];
 
+            // if (x2 - x1 < MIN_ZOOM || y2 - y1 < MIN_ZOOM) {
+            //     console.log("zoom cancel");
+            // } else {
+            // console.log("zoom stop");
+            const dataPointsInRange1 = filterData(filteredData1, 'Temperature', 'Luminosity', x1, x2, y1, y2);
+            const dataPointsInRange2 = filterData(filteredData2, 'Temperature', 'Luminosity', x1, x2, y1, y2);
+            // const dataPointsInRange1 = filteredData1.filter(
+            //     (d) => d['Temperature'] >= x1 && d['Temperature'] <= x2 && d['Luminosity'] >= y1 && d['Luminosity'] <= y2
+            // );
+            // const dataPointsInRange2 = filteredData2.filter(
+            //     (d) => d['Temperature'] >= x1 && d['Temperature'] <= x2 && d['Luminosity'] >= y1 && d['Luminosity'] <= y2
+            // );
+            if (dataPointsInRange1.length || dataPointsInRange2.length) {
+                console.log(dataPointsInRange1.length, dataPointsInRange2.length);
+                setLeft(x1);
+                setRight(x2);
+                setTop(y2);
+                setBottom(y1);
+                setFilteredData1(dataPointsInRange1);
+                setFilteredData2(dataPointsInRange2);
+            } else {
+                console.log("zoom cancel");
+            }
+            //setZoomArea(DEFAULT_ZOOM);
+            // }
+        }
+    };
+
+    const adjustDomain = domain => {
+
+    };
+
+    
+    //call plotscatterzoom function
+    //children order: x, y. and z axis, cartesian grid, tooltip, referenceline
+    //when calling the plotscatterzoom function pass adjustDomain as props
     return (<div style={divStyle || {
         width: "973px",
         height: "400px",
@@ -200,7 +210,7 @@ export default function RenderHRDiagram(props) {
                     line={{ strokeWidth: 2 }}
                     fill="blue"
                 />
-                
+
 
             </ScatterChart>
         </ResponsiveContainer>
