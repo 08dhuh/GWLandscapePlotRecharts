@@ -23,10 +23,20 @@ const scale = num => {
 //     top: yDomain[1],
 //     animation: false,
 // };
+const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
 
 export default function PlotLineZoom(props) { //should be passed x & y domain properties
     //adjustDomain: since x and y axes are called from the parent components
-    const { divStyle, syncId, data, xkey, ykeys, initialState, adjustDomain, strokeStyle, aliases } = props;
+    const { divStyle, 
+        syncId, 
+        data, 
+        xkey, 
+        ykeys, 
+        initialState, 
+        adjustDomain, 
+        strokeStyle, 
+        aliases, 
+        children } = props;
     // const [filteredData1, setFilteredData1] = useState([...data1]);
     // const [filteredData2, setFilteredData2] = useState([...data2]);
     const [zoomArea, setZoomArea] = useState(DEFAULT_ZOOM);
@@ -40,16 +50,13 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
     // const [top, setTop] = useState(initialState.top);
     // const [bottom, setBottom] = useState(initialState.bottom);
     //const MIN_ZOOM = 50; // adjust based on your data
-    const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
 
-    const showZoomBox =
-        isZooming &&
-        !(Math.abs(zoomArea.x1 - zoomArea.x2) < MIN_ZOOM) &&
-        !(Math.abs(zoomArea.y1 - zoomArea.y2) < MIN_ZOOM);
 
     const drawLine = (dataKey, alias = null, style, type = null, dot = false) => {
         if (dataKey === 'time') return;
-        return (<Line type={type || "monotone"}
+        return (<Line
+            id={dataKey}
+            type={type || "monotone"}
             dataKey={dataKey}
             name={alias}
             {...style}
@@ -65,13 +72,20 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
     };
 
     const handleMouseDown = e => {
+        console.log("handleMouseDown called");
+        console.log(Object.keys(e));        
+        console.log("activeLabel:", e.activeLabel);
+        console.log("activeCoordinate:", e.activeCoordinate);
+        console.log("chartX:", e.chartX);
+        console.log("chartY:", e.chartY);
+        console.log("activePayload ",e.activePayload);
+        console.log("activeTooltipIndex ",e.activeTooltipIndex);
         const { xValue, yValue } = e || {};
+        //console.log(xValue, yValue);
         if (!xValue || !yValue) return;
         setIsZooming(true);
         setZoomArea({ x1: xValue, y1: yValue, x2: xValue, y2: yValue });
         //comment out after testing
-        // console.log("handleMouseDown called");
-        // console.log(xValue, yValue);
     };
 
     const handleMouseMove = e => {
@@ -115,6 +129,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
             <LineChart
                 width={700}
                 height={300}
+                data={data}
                 syncId={syncId}
                 margin={{
                     top: 5,

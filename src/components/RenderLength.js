@@ -169,7 +169,7 @@ export default class RenderLength extends React.Component {
             domain={[left, right]}
             padding={{left:20}}
             dataKey="time" unit="" tickFormatter={f => f.toFixed(2)}>
-            <Label value="Time" position="bottom" offset={0} />
+            <Label value="Time(Myr)" position="bottom" offset={0} />
           </XAxis>
           <YAxis
             allowDataOverflow

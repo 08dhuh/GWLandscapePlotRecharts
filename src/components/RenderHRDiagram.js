@@ -12,7 +12,8 @@ import {
     ScatterChart,
     Scatter,
     ZAxis,
-    ReferenceArea
+    ReferenceArea,
+    Dot
 } from "recharts";
 import propTypes from 'prop-types';
 import { filterData } from "./Utils";
@@ -66,6 +67,7 @@ export default function RenderHRDiagram(props) {
 
     const handleMouseDown = e => {
         const { xValue, yValue } = e || {};
+        //console.log(Object.keys(e));
         if (!xValue || !yValue) return;
         setIsZooming(true);
         setZoomArea({ x1: xValue, y1: yValue, x2: xValue, y2: yValue });
@@ -175,7 +177,7 @@ export default function RenderHRDiagram(props) {
                     unit=' L_sun'
                     domain={[bottom, top]}
                     label={{
-                        value: `Luminosity/L_\u{2299}`,
+                        value: `Luminosity/L\u{2299}`,
                         angle: -90,
                         position: 'insideLeft',
                         textAnchor: 'middle',
@@ -203,12 +205,15 @@ export default function RenderHRDiagram(props) {
                     data={filteredData1}
                     line={{ strokeWidth: 2 }}
                     fill="red"
+                    radius={2}
+                    shape={<Dot r={1}/>}
                 />
                 <Scatter
                     name='Star2'
                     data={filteredData2}
                     line={{ strokeWidth: 2 }}
                     fill="blue"
+                    shape={<Dot r={1}/>}
                 />
 
 

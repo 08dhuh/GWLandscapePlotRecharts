@@ -4,7 +4,7 @@ import RenderLengthContainer from "./components/RenderLengthContainer";
 import RenderHRDiagramContainer from "./components/RenderHRDiagramContainer";
 
 export default function App() {
-  let syncId = 'null';
+  let syncId = null;
   return (<div>
     <RenderMassContainer syncId={syncId} />
     <br />

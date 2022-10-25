@@ -66,5 +66,22 @@ const mapScatterData = (dataset, aliases) => { //has two separate datasets
     return [data1, data2];
 }
 
+const mapLineDataforScatterChart = (dataset, ykey, aliases=null) => {
+    let data_total = {};
+    let objkeys = aliases? Object.keys(aliases) : Object.keys(dataset); 
+    objkeys.forEach(key=> {
+        if (key==='time') return;
+        let data = []; //data to be pushed into data_total
+        //let datakey = aliases? aliases[key] : key; //if aliases is provided it will be entry
+        let datakey = key;
+        dataset.time.forEach((t,i) => {
+            let obj = {time: t};
+            obj[ykey] = dataset[key][i];
+            data.push(obj);
+        });
+        data_total[datakey] = data;
+    });
+    return data_total;
+}
 
-export {mass, length, hrattr, mapLineData, mapScatterData};
+export {mass, length, hrattr, mapLineData, mapScatterData, mapLineDataforScatterChart};

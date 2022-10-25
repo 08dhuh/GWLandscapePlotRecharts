@@ -38,6 +38,7 @@ const aliases = {
 // }
 
 const [data1, data2] = mapScatterData(hrattr, aliases);
+//console.log(data1, data2);
 
 export default class RenderHRDiagramContainer extends React.Component {
     constructor(props) {
