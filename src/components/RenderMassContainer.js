@@ -47,8 +47,8 @@ const strokeStyle = {
 export default function RenderMassContainer(props) {
   const { divStyle, syncId } = props;
   const [domain, setDomain] = useState(initialDomain);
-  //const data = mapLineData(mass);
-  const data = mapLineDataforScatterChart(mass, 'mass', aliases);
+  const data = mapLineData(mass);
+  //const data = mapLineDataforScatterChart(mass, 'mass', aliases);
 
   const adjustDomain = (area) => {
     setDomain(() => ({ x1: area.x1, x2: area.x2, y1: area.y1, y2: area.y2 }));
@@ -66,90 +66,90 @@ export default function RenderMassContainer(props) {
     ></Scatter>);
   }
 
-  return (<div style={divStyle || {
-    width: "800px",
-    height: "400px",
-    backgroundColor: "white"
-  }}>
-    <ResponsiveContainer>
-      <ScatterChart width={700}
-        height={300}
-        syncId={syncId}
-        margin={{
-          top: 5,
-          right: 20,
-          left: 20,
-          bottom: 25,
-        }} >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          allowDataOverflow
-          dataKey='time'
-          name="Time(Myr)"
-          type="number"
-          //scale='log'
-          unit="Myr"
-          reversed={false} //uncomment later
-          domain={['auto', 'auto']}
-          padding={{ left: 20 }}
-          tickFormatter={f => f.toFixed(2)}
+  // return (<div style={divStyle || {
+  //   width: "800px",
+  //   height: "400px",
+  //   backgroundColor: "white"
+  // }}>
+  //   <ResponsiveContainer>
+  //     <ScatterChart width={700}
+  //       height={300}
+  //       syncId={syncId}
+  //       margin={{
+  //         top: 5,
+  //         right: 20,
+  //         left: 20,
+  //         bottom: 25,
+  //       }} >
+  //       <CartesianGrid strokeDasharray="3 3" />
+  //       <XAxis
+  //         allowDataOverflow
+  //         dataKey='time'
+  //         name="Time(Myr)"
+  //         type="number"
+  //         //scale='log'
+  //         //unit="Myr"
+  //         reversed={false} //uncomment later
+  //         domain={['auto', 'auto']}
+  //         padding={{ left: 20 }}
+  //         tickFormatter={f => f.toFixed(2)}
           
-        >
-          <Label value="Time(Myr)" position="bottom" offset={0} />
-        </XAxis>
-        <YAxis
-          allowDataOverflow
-          dataKey='mass'
-          //unit={`M_\u{2299}`}
-          label={{ value: `Mass/M_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
-          domain={[domain.y1, domain.y2]}
-          padding={{ bottom: 5, left: 10 }} />
-        <Tooltip
-          allowEscapeViewBox={{ x: false, y: false }}
-          //position={{ x: 760, y: 10 }}
-          filterNull={false} />
-        <Legend layout="vertical" align="right" verticalAlign="top" />
-        {ykeys.map(key => { return drawDot(key, data[key],strokeStyle[key]); })}
-      </ScatterChart>
+  //       >
+  //         <Label value="Time(Myr)" position="bottom" offset={0} />
+  //       </XAxis>
+  //       <YAxis
+  //         allowDataOverflow
+  //         dataKey='mass'
+  //         //unit={`M_\u{2299}`}
+  //         label={{ value: `Mass/M_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
+  //         domain={[domain.y1, domain.y2]}
+  //         padding={{ bottom: 5, left: 10 }} />
+  //       <Tooltip
+  //         allowEscapeViewBox={{ x: false, y: false }}
+  //         //position={{ x: 760, y: 10 }}
+  //         filterNull={false} />
+  //       <Legend layout="vertical" align="right" verticalAlign="top" />
+  //       {ykeys.map(key => { return drawDot(key, data[key],strokeStyle[key]); })}
+  //     </ScatterChart>
 
-    </ResponsiveContainer>
-  </div >
-  );
+  //   </ResponsiveContainer>
+  // </div >
+  // );
 
-  // return (<PlotLineZoom
-  //   divStyle={divStyle}
-  //   syncId={syncId}
-  //   data={data}
-  //   xkey={xkey}
-  //   ykeys={ykeys}
-  //   initialState={initialDomain}
-  //   adjustDomain={adjustDomain}
-  //   strokeStyle={strokeStyle}
-  //   aliases={aliases}>
-  //   <CartesianGrid strokeDasharray="3 3" />
-  //   <XAxis
-  //     allowDataOverflow
-  //     type="number"
-  //     scale='time'
-  //     domain={[domain.x1, domain.x2]}
-  //     dataKey={xkey}
-  //     padding={{ left: 20 }}
-  //     unit=""
-  //     tickFormatter={f => f.toFixed(2)}>
-  //     <Label value="Time(Myr)" position="bottom" offset={0} />
-  //   </XAxis>
-  //   <YAxis
-  //     allowDataOverflow
-  //     label={{ value: `Mass/M_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
-  //     domain={[domain.y1, domain.y2]}
-  //     padding={{ bottom: 5, left: 10 }} />
-  //   <Tooltip
-  //     allowEscapeViewBox={{ x: false, y: false }}
-  //     //position={{ x: 760, y: 10 }}
-  //     filterNull={false} />
-  //   <Legend layout="vertical" align="right" verticalAlign="top" />
+  return (<PlotLineZoom
+    divStyle={divStyle}
+    syncId={syncId}
+    data={data}
+    xkey={xkey}
+    ykeys={ykeys}
+    initialState={initialDomain}
+    adjustDomain={adjustDomain}
+    strokeStyle={strokeStyle}
+    aliases={aliases}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis
+      allowDataOverflow
+      type="number"
+      scale='time'
+      domain={[domain.x1, domain.x2]}
+      dataKey={xkey}
+      padding={{ left: 20 }}
+      unit=""
+      tickFormatter={f => f.toFixed(2)}>
+      <Label value="Time(Myr)" position="bottom" offset={0} />
+    </XAxis>
+    <YAxis
+      allowDataOverflow
+      label={{ value: `Mass/M_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
+      domain={[domain.y1, domain.y2]}
+      padding={{ bottom: 5, left: 10 }} />
+    <Tooltip
+      allowEscapeViewBox={{ x: false, y: false }}
+      //position={{ x: 760, y: 10 }}
+      filterNull={false} />
+    <Legend layout="vertical" align="right" verticalAlign="top" />
 
-  // </PlotLineZoom>);
+  </PlotLineZoom>);
 }
 
 

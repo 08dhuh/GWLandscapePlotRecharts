@@ -16,11 +16,10 @@ import {
     Dot
 } from "recharts";
 import propTypes from 'prop-types';
-import { filterData } from "./Utils";
+import { filterData,tickExpFormatter } from "./Utils";
 
-const scale = num => {
-    return num.toExponential();
-}
+
+
 const MIN_ZOOM = 50; // adjust based on your data
 const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
 const xDomain = [1000, 10e6];
@@ -124,7 +123,7 @@ export default function RenderHRDiagram(props) {
 
     };
 
-    
+
     //call plotscatterzoom function
     //children order: x, y. and z axis, cartesian grid, tooltip, referenceline
     //when calling the plotscatterzoom function pass adjustDomain as props
@@ -158,14 +157,14 @@ export default function RenderHRDiagram(props) {
                     name="Temperature"
                     type="number"
                     scale='log'
-                    unit="K"
+                    //unit="K"
                     reversed={true} //uncomment later
                     domain={[left, right]}
-
-                    tickFormatter={scale}
-                    ticks={[10e3, 10e4, 10e5]}
+                    tickCount={4}
+                    tickFormatter={tickExpFormatter}
+                    ticks={[1000, 10000, 100000,1000000]}
                 >
-                    <Label value="Temperature" position="bottom" offset={0} />
+                    <Label value="Temperature(K)" position="bottom" offset={0} />
                 </XAxis>
                 <YAxis
                     allowDataOverflow
@@ -173,8 +172,8 @@ export default function RenderHRDiagram(props) {
                     name="Luminosity"
                     type="number"
                     scale='log'
-                    tickFormatter={scale}
-                    unit=' L_sun'
+                    tickFormatter={tickExpFormatter}
+                    //unit=' L_sun'
                     domain={[bottom, top]}
                     label={{
                         value: `Luminosity/L\u{2299}`,
@@ -200,20 +199,24 @@ export default function RenderHRDiagram(props) {
                         y2={zoomArea?.y2}
                     />
                 )} */}
+                <ReferenceLine label="R-08" 
+                stroke="gray" 
+                strokeDasharray="3 3" 
+                segment={[{ x: left, y: bottom }, { x: right, y: top }]} />
                 <Scatter
                     name='Star1'
                     data={filteredData1}
                     line={{ strokeWidth: 2 }}
                     fill="red"
                     radius={2}
-                    shape={<Dot r={1}/>}
+                //shape={<Dot r={1}/>}
                 />
                 <Scatter
                     name='Star2'
                     data={filteredData2}
                     line={{ strokeWidth: 2 }}
                     fill="blue"
-                    shape={<Dot r={1}/>}
+                //shape={<Dot r={1}/>}
                 />
 
 

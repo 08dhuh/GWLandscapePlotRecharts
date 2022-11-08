@@ -38,6 +38,14 @@ const hrattr = {
     time: data.time
 }
 
+const vdhattr = {
+    time: data.time,
+    semimajor: data.semimajor,
+    mass1: data.totalMass1,
+    mass2: data.totalMass2,
+    eccentricity: data.eccentricity
+}
+
 const mapLineData = (dataset, keys = null) => {
     let data = [];
     dataset.time.forEach((_, i) => {
@@ -84,4 +92,4 @@ const mapLineDataforScatterChart = (dataset, ykey, aliases=null) => {
     return data_total;
 }
 
-export {mass, length, hrattr, mapLineData, mapScatterData, mapLineDataforScatterChart};
+export {mass, length, hrattr, vdhattr, mapLineData, mapScatterData, mapLineDataforScatterChart};

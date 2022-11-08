@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     ResponsiveContainer,
     LineChart,
@@ -7,9 +7,9 @@ import {
 } from "recharts";
 import { filterData } from "./Utils";
 
-const scale = num => {
-    return num.toExponential();
-}
+// const scale = num => {
+//     return num.toExponential();
+// }
 
 // const xDomain = [1000, 10e6];
 // const yDomain = [10e-11, 10e6];

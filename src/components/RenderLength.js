@@ -12,10 +12,11 @@ import {
   ReferenceArea
 } from "recharts";
 import propTypes from 'prop-types';
+import { tickExpFormatter } from "./Utils";
 
-const scale = num => {
-  return num.toExponential();
-}
+// const scale = num => {
+//   return num.toExponential();
+// }
 
 const strokeStyle = {
   semimajor: { stroke: 'black', strokeWidth: '2' },
@@ -174,7 +175,7 @@ export default class RenderLength extends React.Component {
           <YAxis
             allowDataOverflow
             scale='log'
-            tickFormatter={scale}
+            tickFormatter={tickExpFormatter}
             domain={[bottom, top]}
             padding={{ bottom: 5 }}
             label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' ,offset:-5}} />
