@@ -5,13 +5,15 @@ img {
 
 .alphabet {
     padding-left: 1%;
-    padding-right: 1%;
-    width: 2%;   
+    /*padding-right: 1%;*/
+    max-width: 2%;
+    min-width: 2%;
+
 }
 
 .cartoon {
-    
-    width: 33%;
+    min-width: auto;
+    max-width: 33%;
 }
 
 .desc {

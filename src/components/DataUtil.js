@@ -1,5 +1,13 @@
 import data from "../data/data.json";
 
+const units = {
+    time: 'Myr',
+    Temperature: 'K',
+    Luminosity: <>L<sub>&#8857;</sub></>,
+    mass: <>M<sub>&#8857;</sub></>,
+    length: <>R<sub>&#8857;</sub></>
+}
+
 const mass = {
     totalMass1: data.totalMass1,
     totalMass2: data.totalMass2,
@@ -43,7 +51,11 @@ const vdhattr = {
     semimajor: data.semimajor,
     mass1: data.totalMass1,
     mass2: data.totalMass2,
-    eccentricity: data.eccentricity
+    eccentricity: data.eccentricity,
+    MT_history: data.MT_history,
+    Stellar_Type1: data.Stellar_Type1,
+    Stellar_Type2: data.Stellar_Type2,
+    Z1: data.Z1
 }
 
 const mapLineData = (dataset, keys = null) => {
@@ -92,4 +104,4 @@ const mapLineDataforScatterChart = (dataset, ykey, aliases=null) => {
     return data_total;
 }
 
-export {mass, length, hrattr, vdhattr, mapLineData, mapScatterData, mapLineDataforScatterChart};
+export { units, mass, length, hrattr, vdhattr, mapLineData, mapScatterData, mapLineDataforScatterChart};

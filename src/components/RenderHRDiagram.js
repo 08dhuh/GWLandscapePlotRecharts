@@ -13,17 +13,16 @@ import {
     Scatter,
     ZAxis,
     ReferenceArea,
-    Dot
 } from "recharts";
 import propTypes from 'prop-types';
-import { filterData,tickExpFormatter } from "./Utils";
+import { filterData, tickExpFormatter, getReferenceLineSegment, getReferenceRangeType } from "./Utils";
+import { units } from './DataUtil';
 
 
-
-const MIN_ZOOM = 50; // adjust based on your data
 const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
 const xDomain = [1000, 10e6];
 const yDomain = [10e-11, 10e6];
+const radii = [ 1e-9,  1e-6,  0.001, 1,  1000, ];
 
 const initialState = {
     left: xDomain[0],
@@ -34,6 +33,17 @@ const initialState = {
     top: yDomain[1],
     animation: false,
 };
+
+const Rformatter = props => {
+    // const superscript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+    // const minus = '⁻';
+    // const toSuper = n => `${n}`.split('').map(m =>
+    //     m === '-' ? minus : superscript[m]
+    // ).join('');
+    const [base, exponent] = props.num.toExponential().split('e').map(n => parseFloat(n));
+    //return <>R<sub>&#8857;</sub><sup>exponent</sup></>;
+    return exponent;
+}
 
 export default function RenderHRDiagram(props) {
     const { divStyle, syncId, data1, data2 } = props;
@@ -48,11 +58,15 @@ export default function RenderHRDiagram(props) {
     const [top, setTop] = useState(initialState.top);
     const [bottom, setBottom] = useState(initialState.bottom);
 
-
-    const showZoomBox =
-        isZooming &&
-        !(Math.abs(zoomArea.x1 - zoomArea.x2) < MIN_ZOOM) &&
-        !(Math.abs(zoomArea.y1 - zoomArea.y2) < MIN_ZOOM);
+    const drawReferenceLine = (R, xDomain, yDomain, style = null) => {
+        return <ReferenceLine
+            label={`${R} R_sun`}
+            stroke="gray"
+            strokeDasharray="3 3"
+            position="start"
+            segment={getReferenceLineSegment(R, xDomain, yDomain)} 
+            />;
+    }
 
     const handleZoomOUt = () => {
         setFilteredData1([...data1]);
@@ -66,13 +80,9 @@ export default function RenderHRDiagram(props) {
 
     const handleMouseDown = e => {
         const { xValue, yValue } = e || {};
-        //console.log(Object.keys(e));
         if (!xValue || !yValue) return;
         setIsZooming(true);
         setZoomArea({ x1: xValue, y1: yValue, x2: xValue, y2: yValue });
-        //comment out after testing
-        // console.log("handleMouseDown called");
-        // console.log(xValue, yValue);
     };
 
     const handleMouseMove = e => {
@@ -91,18 +101,9 @@ export default function RenderHRDiagram(props) {
             if (x1 > x2) [x1, x2] = [x2, x1];
             if (y1 > y2) [y1, y2] = [y2, y1];
 
-            // if (x2 - x1 < MIN_ZOOM || y2 - y1 < MIN_ZOOM) {
-            //     console.log("zoom cancel");
-            // } else {
-            // console.log("zoom stop");
             const dataPointsInRange1 = filterData(filteredData1, 'Temperature', 'Luminosity', x1, x2, y1, y2);
             const dataPointsInRange2 = filterData(filteredData2, 'Temperature', 'Luminosity', x1, x2, y1, y2);
-            // const dataPointsInRange1 = filteredData1.filter(
-            //     (d) => d['Temperature'] >= x1 && d['Temperature'] <= x2 && d['Luminosity'] >= y1 && d['Luminosity'] <= y2
-            // );
-            // const dataPointsInRange2 = filteredData2.filter(
-            //     (d) => d['Temperature'] >= x1 && d['Temperature'] <= x2 && d['Luminosity'] >= y1 && d['Luminosity'] <= y2
-            // );
+
             if (dataPointsInRange1.length || dataPointsInRange2.length) {
                 console.log(dataPointsInRange1.length, dataPointsInRange2.length);
                 setLeft(x1);
@@ -114,19 +115,9 @@ export default function RenderHRDiagram(props) {
             } else {
                 console.log("zoom cancel");
             }
-            //setZoomArea(DEFAULT_ZOOM);
-            // }
         }
     };
 
-    const adjustDomain = domain => {
-
-    };
-
-
-    //call plotscatterzoom function
-    //children order: x, y. and z axis, cartesian grid, tooltip, referenceline
-    //when calling the plotscatterzoom function pass adjustDomain as props
     return (<div style={divStyle || {
         width: "973px",
         height: "400px",
@@ -157,12 +148,11 @@ export default function RenderHRDiagram(props) {
                     name="Temperature"
                     type="number"
                     scale='log'
-                    //unit="K"
                     reversed={true} //uncomment later
                     domain={[left, right]}
                     tickCount={4}
                     tickFormatter={tickExpFormatter}
-                    ticks={[1000, 10000, 100000,1000000]}
+                    ticks={[1000, 10000, 100000, 1000000]}
                 >
                     <Label value="Temperature(K)" position="bottom" offset={0} />
                 </XAxis>
@@ -173,7 +163,6 @@ export default function RenderHRDiagram(props) {
                     type="number"
                     scale='log'
                     tickFormatter={tickExpFormatter}
-                    //unit=' L_sun'
                     domain={[bottom, top]}
                     label={{
                         value: `Luminosity/L\u{2299}`,
@@ -187,22 +176,14 @@ export default function RenderHRDiagram(props) {
                     dataKey='time'
                     name='time'
                     type='number'
-                    unit='Myr'
                 />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                <Tooltip
+                    cursor={{ strokeDasharray: '3 3' }}
+                    formatter={HRTooltipFormatter}
+                />
                 <Legend wrapperStyle={{ paddingLeft: "40px" }} layout="vertical" align="right" verticalAlign="top" />
-                {/* {showZoomBox && (
-                    <ReferenceArea
-                        x1={zoomArea?.x1}
-                        x2={zoomArea?.x2}
-                        y1={zoomArea?.y1}
-                        y2={zoomArea?.y2}
-                    />
-                )} */}
-                <ReferenceLine label="R-08" 
-                stroke="gray" 
-                strokeDasharray="3 3" 
-                segment={[{ x: left, y: bottom }, { x: right, y: top }]} />
+
+                {radii.filter(r=> getReferenceRangeType(r, xDomain, yDomain)).map(r=> {return drawReferenceLine(r, xDomain, yDomain)})}
                 <Scatter
                     name='Star1'
                     data={filteredData1}
@@ -218,11 +199,20 @@ export default function RenderHRDiagram(props) {
                     fill="blue"
                 //shape={<Dot r={1}/>}
                 />
+                <ReferenceArea
+                    x1={zoomArea?.x1}
+                    x2={zoomArea?.x2}
+                    y1={zoomArea?.y1}
+                    y2={zoomArea?.y2}
+                />
 
 
             </ScatterChart>
         </ResponsiveContainer>
     </div>);
+}
+const HRTooltipFormatter = (value, name) => {
+    return <>{value} {units[name]}</>;
 }
 
 // export default class RenderHRDiagram extends React.Component {

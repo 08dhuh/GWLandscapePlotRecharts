@@ -1,23 +1,17 @@
 import React, { useState } from "react";
-import { mapLineData, mapLineDataforScatterChart } from "./DataUtil";
+import { mapLineData, units } from "./DataUtil";
 import { mass } from "../data/dataset";
 import propTypes from 'prop-types';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
   Label,
-  ReferenceArea,
-  ScatterChart,
-  Scatter,
-  Dot
 } from "recharts";
 import PlotLineZoom from "./PlotLineZoom";
+
 
 const xDomain = ['auto', dataMax => (dataMax * 1.1)];
 const yDomain = ['auto', 'dataMax'];
@@ -53,18 +47,67 @@ export default function RenderMassContainer(props) {
   const adjustDomain = (area) => {
     setDomain(() => ({ x1: area.x1, x2: area.x2, y1: area.y1, y2: area.y2 }));
   }
-  const drawDot = (datakey, data, stroke) => {
-    return (<Scatter
-      name={datakey}
-      data={data}
-      line={stroke}
-      lineType='joint'
-      //fill="red"
-      //radius={2}
-      shape={<Dot r={1} />}
+
+
+  return (<PlotLineZoom
+    divStyle={divStyle}
+    syncId={syncId}
+    data={data}
+    xkey={xkey}
+    ykeys={ykeys}
+    initialState={initialDomain}
+    adjustDomain={adjustDomain}
+    strokeStyle={strokeStyle}
+    aliases={aliases}
+    scaleType='Linear'
+    yunit={units.mass}
+    >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis
+      allowDataOverflow
+      type="number"
+      scale='time'
+      domain={[domain.x1, domain.x2]}
+      dataKey={xkey}
+      padding={{ left: 20 }}
+      unit=""
+      tickFormatter={f => f.toFixed(2)}>
+      <Label value={`Time(${units.time})`} position="bottom" offset={0} />
+    </XAxis>
+    <YAxis
+      allowDataOverflow
+      domain={[domain.y1, domain.y2]}
+      padding={{ bottom: 5, left: 10 }}
+      tickFormatter={f => f.toFixed(2)}>
+        <Label 
+        value={`Mass(M\u{2299})`}
+        angle='-90' position='insideLeft' textAnchor='middle' offset='-5'>
+          
+          </Label>          
+        </YAxis> 
+    
+    <Legend layout="vertical" align="right" verticalAlign="top" />
+
+  </PlotLineZoom>);
+}
+
+
+RenderMassContainer.propTypes = {
+  syncId: propTypes.string,
+}
+
+  // const drawDot = (datakey, data, stroke) => {
+  //   return (<Scatter
+  //     name={datakey}
+  //     data={data}
+  //     line={stroke}
+  //     lineType='joint'
+  //     //fill="red"
+  //     //radius={2}
+  //     shape={<Dot r={1} />}
       
-    ></Scatter>);
-  }
+  //   ></Scatter>);
+  // }
 
   // return (<div style={divStyle || {
   //   width: "800px",
@@ -115,45 +158,3 @@ export default function RenderMassContainer(props) {
   //   </ResponsiveContainer>
   // </div >
   // );
-
-  return (<PlotLineZoom
-    divStyle={divStyle}
-    syncId={syncId}
-    data={data}
-    xkey={xkey}
-    ykeys={ykeys}
-    initialState={initialDomain}
-    adjustDomain={adjustDomain}
-    strokeStyle={strokeStyle}
-    aliases={aliases}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis
-      allowDataOverflow
-      type="number"
-      scale='time'
-      domain={[domain.x1, domain.x2]}
-      dataKey={xkey}
-      padding={{ left: 20 }}
-      unit=""
-      tickFormatter={f => f.toFixed(2)}>
-      <Label value="Time(Myr)" position="bottom" offset={0} />
-    </XAxis>
-    <YAxis
-      allowDataOverflow
-      label={{ value: `Mass/M_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' }}
-      domain={[domain.y1, domain.y2]}
-      padding={{ bottom: 5, left: 10 }} />
-    <Tooltip
-      allowEscapeViewBox={{ x: false, y: false }}
-      //position={{ x: 760, y: 10 }}
-      filterNull={false} />
-    <Legend layout="vertical" align="right" verticalAlign="top" />
-
-  </PlotLineZoom>);
-}
-
-
-RenderMassContainer.propTypes = {
-  syncId: propTypes.string,
-}
-

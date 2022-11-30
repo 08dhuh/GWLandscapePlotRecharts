@@ -156,7 +156,11 @@ export default class RenderLength extends React.Component {
             left: 20,
             bottom: 25,
           }}
-          onMouseDown={(e) => this.setState({ refAreaLeft: e.activeLabel })}
+          onMouseDown={(e) => {
+            this.setState({ refAreaLeft: e.activeLabel }); 
+            console.log("chartX:", e.chartX);
+            console.log("chartY:", e.chartY);
+          }}
           onMouseMove={(e) => this.state.refAreaLeft && this.setState({ refAreaRight: e.activeLabel })}
           // eslint-disable-next-line react/jsx-no-bind
           onMouseUp={this.zoom.bind(this)}
@@ -168,7 +172,7 @@ export default class RenderLength extends React.Component {
             type="number"
             scale='time'
             domain={[left, right]}
-            padding={{left:20}}
+            padding={{ left: 20 }}
             dataKey="time" unit="" tickFormatter={f => f.toFixed(2)}>
             <Label value="Time(Myr)" position="bottom" offset={0} />
           </XAxis>
@@ -178,14 +182,14 @@ export default class RenderLength extends React.Component {
             tickFormatter={tickExpFormatter}
             domain={[bottom, top]}
             padding={{ bottom: 5 }}
-            label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle' ,offset:-5}} />
+            label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle', offset: -5 }} />
           <Tooltip formatter={(value, name) => {
             //console.log(value,name);
             if (name === 'time') { return [`${value} Myr`, name]; }
             return [value, name];
-          }} 
-          position={{}}/>
-          <Legend layout="vertical" align="right" verticalAlign="top" />          
+          }}
+            position={{}} />
+          <Legend layout="vertical" align="right" verticalAlign="top" />
           {Object.keys(datakeys).map((key) => { return this.drawLine(key, datakeys[key], strokeStyle[key]) })}
           {refAreaLeft && refAreaRight ? (
             <ReferenceArea x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
