@@ -1,0 +1,36 @@
+img {    
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.alphabet {
+    padding-left: 1%;
+    /*padding-right: 1%;*/
+    max-width: 2%;
+    min-width: 2%;
+
+}
+
+.cartoon {
+    min-width: auto;
+    max-width: 33%;
+}
+
+.desc {
+    float:auto;
+    padding-left: 1%;
+      
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500;  
+}
+
+.bold {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+}
