@@ -8,7 +8,6 @@ import {
     ResponsiveContainer,
     Label,
     ReferenceLine,
-    ReferenceLineProps,
     ScatterChart,
     Scatter,
     ZAxis,

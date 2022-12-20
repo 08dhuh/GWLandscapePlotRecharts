@@ -3,17 +3,24 @@ import RenderMassContainer from "./components/RenderMassContainer";
 import RenderLengthContainer from "./components/RenderLengthContainer";
 import RenderHRDiagramContainer from "./components/RenderHRDiagramContainer";
 import VanDenHeuvel from "./components/VanDenHeuvel";
-export default function App() {
+import rawdata from './data/341BSE_Detailed_Output_0.json';
+//import { totalData } from "./components/DataUtil";
+
+export default function App(props) {
   let syncId = null;
+
   return (
     <>
-      <VanDenHeuvel /> <br />
+      
       <div className="plotContainer">
-        <RenderMassContainer className="container" syncId={syncId} />
+        <RenderMassContainer className="container" syncId={syncId} rawdata={rawdata}/>
         <br />
-        <RenderLengthContainer className="container" syncId={syncId} />
+        <RenderLengthContainer className="container" syncId={syncId} rawdata={rawdata}/>
         <br /><br />
-        <RenderHRDiagramContainer className="container" syncId={syncId} />
+        <RenderHRDiagramContainer className="container" syncId={syncId} rawdata={rawdata}/>
       </div>
+
+      <VanDenHeuvel rawdata={rawdata}/> <br />
     </>);
 }
+//<VanDenHeuvel /> <br />

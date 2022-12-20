@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { vdhattr } from "./DataUtil";
+import DataUtil from "./DataUtil";
 import './VanDenHeuvel.css';
+
+const time = 'Time';
+const semimajor = 'SemiMajorAxis';
+const totalMass1 = 'Mass(1)';
+const totalMass2 = 'Mass(2)';
+const eccentricity = 'Eccentricity';
+const MT_history = 'MT_History';
+const Stellar_Type1 = 'Stellar_Type(1)';
+const Stellar_Type2 = 'Stellar_Type(2)';
+const Z1 = 'Metallicity@ZAMS(1)';
+
 export default function VanDenHeuvel(props) {
     const [imageIndex, setImageIndex] = useState(null);
     const [eventSequenceIndex, setEventSequenceIndex] = useState(null);
     const [eventString, setEventString] = useState(null);
     const [rotateimage, setRotateImage] = useState(null);
+    const vdhattr = DataUtil(props.rawdata, 'VanDenHeuvel');
+    //console.log(vdhattr);
 
-    const dummystr = [
-        'Zero-age main-sequence, metallicity Z=0.0010',
-        'Stable mass transfer from 1 to 2',
-        'Star 1 undergoes supernova and forms a BH',
-        'Common envelope initiated by 2',
-        'Star 2 undergoes supernova and forms a BH',
-        'Double compact object BH+BH merging in 7.5 Myr' //Tdlay
-    ]
+    // const dummystr = [
+    //     'Zero-age main-sequence, metallicity Z=0.0010',
+    //     'Stable mass transfer from 1 to 2',
+    //     'Star 1 undergoes supernova and forms a BH',
+    //     'Common envelope initiated by 2',
+    //     'Star 2 undergoes supernova and forms a BH',
+    //     'Double compact object BH+BH merging in 7.5 Myr' //Tdlay
+    // ]
     //const eventIndex = [2, 26, 13, 49, 15, 51]; //should generate these
     const eventAlphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     const stellarTypes = [
@@ -35,20 +48,20 @@ export default function VanDenHeuvel(props) {
         //Beginning of event
         sequenceIndices.push(0);
         imageIndices.push(2);
-        eventStrings.push(`Zero-age main-sequence, metallicity Z=${vdhattr.Z1[0]}`);
+        eventStrings.push(`Zero-age main-sequence, metallicity Z=${vdhattr[Z1][0]}`);
 
         //iterate through time sequence
-        for (let i = 0; i < vdhattr.time.length; i++) {
+        for (let i = 0; i < vdhattr[time].length; i++) {
             if (i == 0) continue;
             //if (isMerger) break;
 
-            let stype1 = vdhattr.Stellar_Type1[i];
-            let stype2 = vdhattr.Stellar_Type2[i];
+            let stype1 = vdhattr[Stellar_Type1][i];
+            let stype2 = vdhattr[Stellar_Type2][i];
 
             //eventClass=='Mass Transfer'
-            if (vdhattr.MT_history[i] > 0 && vdhattr.MT_history[i - 1] !== vdhattr.MT_history[i]) {
+            if (vdhattr[MT_history][i] > 0 && vdhattr[MT_history][i - 1] !== vdhattr[MT_history][i]) {
                 let image_num, eventstring;
-                let mtValue = vdhattr.MT_history[i];
+                let mtValue = vdhattr[MT_history][i];
                 isMerger = true;
 
                 switch (mtValue) {
@@ -92,11 +105,11 @@ export default function VanDenHeuvel(props) {
 
             //eventClass = 'supernova' or 'stellar type change'
             let type_changed_star, isSupernova; //which star 
-            if (stype1 !== vdhattr.Stellar_Type1[i - 1]) {
+            if (stype1 !== vdhattr[Stellar_Type1][i - 1]) {
                 type_changed_star = 1;
                 isSupernova = stype1 === 13 || stype1 === 14;
             }
-            if (stype2 !== vdhattr.Stellar_Type2[i - 1]) {
+            if (stype2 !== vdhattr[Stellar_Type2][i - 1]) {
                 type_changed_star = 2;
                 isSupernova = stype2 === 13 || stype2 === 14;
             }
@@ -106,7 +119,7 @@ export default function VanDenHeuvel(props) {
                 if (isSupernova) {
                     let remType = type_changed_star === 1 ? stype1 : stype2;
                     let comType = type_changed_star === 1 ? stype2 : stype1;
-                    let disrupted = vdhattr.eccentricity[i] > 1 || vdhattr.semimajor[i] < 0;
+                    let disrupted = vdhattr[eccentricity][i] > 1 || vdhattr[semimajor][i] < 0;
                     eventstring = `Star ${remType} undergoes supernova and forms a ${stellarTypes[remType]} `
                         + `${disrupted ? '. Orbit becomes unbound' : ''}.`;
                     if (disrupted) {
@@ -121,8 +134,8 @@ export default function VanDenHeuvel(props) {
                         image_num = comType === 13 ? 13 : 15;
                     }
                 } else {
-                    let stypePre = vdhattr[`Stellar_Type${type_changed_star}`][i - 1];
-                    let stypePost = vdhattr[`Stellar_Type${type_changed_star}`][i];
+                    let stypePre = vdhattr[`Stellar_Type(${type_changed_star})`][i - 1];
+                    let stypePost = vdhattr[`Stellar_Type(${type_changed_star})`][i];
                     //no image_num
                     eventstring = `Star ${type_changed_star}: ${stellarTypes[stypePre]} -> ${stellarTypes[stypePost]} `;
                 }
@@ -130,9 +143,9 @@ export default function VanDenHeuvel(props) {
                 imageIndices.push(image_num);
                 eventStrings.push(eventstring);
             }
-            if (i === vdhattr.time.length - 1 && !isMerger) {
+            if (i === vdhattr[time].length - 1 && !isMerger) {
                 let eventstring, image_num;
-                let isUnbound = vdhattr.eccentricity[i] > 1 || vdhattr.semimajor[i] < 0;
+                let isUnbound = vdhattr[eccentricity][i] > 1 || vdhattr[semimajor][i] < 0;
                 let types = Array.from({ length: 5 }, (a, b) => b + 10);
 
                 let isDCO = types.includes(stype1) && types.includes(stype2);
@@ -141,10 +154,10 @@ export default function VanDenHeuvel(props) {
                     let c = 299792458;
                     let G = 6.67428e-11;
                     let Rsun = 695500000;
-                    let a = vdhattr.semimajor[i] * Rsun;
-                    let e = vdhattr.eccentricity[i];
-                    let m1 = vdhattr.mass1[i];
-                    let m2 = vdhattr.mass2[i];
+                    let a = vdhattr[semimajor][i] * Rsun;
+                    let e = vdhattr[eccentricity][i];
+                    let m1 = vdhattr[totalMass1][i];
+                    let m2 = vdhattr[totalMass2][i];
                     let beta = 64 / 5 * G ** 3 * m1 * m2 * (m1 + m2) * Msunkg ** 3 / c ** 5;
                     let T0 = a ** 4 / 4 / beta;
                     let Tdelay = T0 * (1 - e ** 2) ** (7 / 2) * (
@@ -180,12 +193,14 @@ export default function VanDenHeuvel(props) {
         return (<div className="cartoon"><img src={filepath} /></div>);
     }
 
-    const bebold = input => <b className="bold">{input}</b>;
+    const bebold = input => <b className="bold">{input.toFixed(4)}</b>;
 
     const descDiv = (index, i) => { //index: eventIndex value, i: sequence number 
         //let index = eventIndex[i];
-        return (<div className="desc"> Time = {bebold(vdhattr.time[index])} Myr, a = {bebold(vdhattr.semimajor[index])} R<sub>⊙</sub>
-            <br /> M<sub>1</sub> = {bebold(vdhattr.mass1[index])} M<sub>⊙</sub>, M<sub>2</sub> = {bebold(vdhattr.mass2[index])} M<sub>⊙</sub>
+        //console.log('index '+index);
+        //console.log(vdhattr[time][index]);
+        return (<div className="desc"> Time = {bebold(vdhattr[time][index])} Myr, a = {bebold(vdhattr[semimajor][index])} R<sub>⊙</sub>
+            <br /> M<sub>1</sub> = {bebold(vdhattr[totalMass1][index])} M<sub>⊙</sub>, M<sub>2</sub> = {bebold(vdhattr[totalMass2][index])} M<sub>⊙</sub>
             <br /> {eventString[i]}
         </div>);
     }

@@ -7,13 +7,28 @@ import {
     Tooltip
 } from "recharts";
 
-const getTwoPoints = (array) => {
-    let point1 = { y: array[0].y, value: array[0].value };
-    let p = array.find(point => {
-        return point1.value === 0 ? point.value !== point1.value :
-            Math.abs((point.value - point1.value) / point1.value) > 1.1
-    });
-    let point2 = p ? { y: p.y, value: p.value } : null;
+//this method 
+const getTwoPoints = (points) => { //points is an array storing values and y coordinates of each attribute
+    console.log(points);
+    let point1, point2value;
+    for (let array in points) {
+        point1 = { y: array[0].y, value: array[0].value }; //first point
+        let p = array.find(point => {
+            return point1.value === 0 ? point.value !== point1.value :
+                Math.abs((point.value - point1.value) / point1.value) > 1.1
+        });
+        if (p) {
+            point2value = p;
+            break;
+        }
+    }
+    // let p = array.find(point => {
+    //     return point1.value === 0 ? point.value !== point1.value :
+    //         Math.abs((point.value - point1.value) / point1.value) > 1.1
+    // });
+    console.log('point1 ' + point1);
+    console.log('p ' + point2value);
+    let point2 = point2value ? { y: point2value.y, value: point2value.value } : null;
     return point2 ? [point1, point2] : null;
 };
 
@@ -60,16 +75,16 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
     const [isZoomed, setIsZoomed] = useState(false);
     const [yconst, setYconst] = useState(null);
     const Linechartload = useCallback(line => {
-        if (line && Line1) {
-            let points = Line1.current.props.points;
-            //console.log(points);
-            let twopoints = getTwoPoints(points);
+        if (line && LinesRef.current.length === aliases.length - 1) {
+            //let points = LinesRef.current.props.points; //current.props
+            let points = LinesRef.current.map(line => line.props.points);
+            //console.log('points:'+points.length+points[0]);
+            let twopoints = getTwoPoints(points); //points is now an array of points
             //console.log(twopoints);
             if (scaleType === 'Linear') setYconst(getYconstsLinear(...twopoints));
             if (scaleType === 'Log') setYconst(getYconstsLog(...twopoints));
             //console.log(yconst);
         }
-
     }, [isZoomed]);
     useEffect(() => {
         if (ToolTip.current) {
@@ -77,7 +92,8 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
         }
     });
 
-    const Line1 = useRef();
+    //const Line1 = useRef();
+    const LinesRef = useRef([]); //LinesRef should store references to Line 
     const ToolTip = useRef();
 
     // const showZoomBox =
@@ -85,8 +101,8 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
     //     !(Math.abs(zoomArea.x1 - zoomArea.x2) < MIN_ZOOM) &&
     //     !(Math.abs(zoomArea.y1 - zoomArea.y2) < MIN_ZOOM);
 
-    const drawLine = (dataKey, alias = null, style, type = null, dot = false) => {
-        if (dataKey === 'time') return;
+    const drawLine = (dataKey, index, alias = null, style, type = null, dot = false) => {
+        if (dataKey === xkey) return;
         return (<Line
             id={dataKey}
             type={type || "monotone"}
@@ -94,7 +110,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
             name={alias}
             {...style}
             dot={dot}
-            ref={Line1 ? Line1 : null} //There should be new logic to get two datapoints from the plot
+            ref={current => LinesRef.current[index] = current} //There should be new logic to get two datapoints from the plot
         />);
         //{...(stroke?{stroke:stroke}:{})}
     }
@@ -115,7 +131,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
         // console.log("scaletype", scaleType);
         // console.log("translated Y value", translateCharttoCoord(e.chartY, yconst, scaleType));
         //console.log("activePayload ",e.activePayload);
-       //console.log("activeTooltipIndex ", e.activeTooltipIndex);
+        //console.log("activeTooltipIndex ", e.activeTooltipIndex);
         const { activeLabel, chartY } = e || {};
         //console.log(xValue, yValue);
         if (!activeLabel || !chartY) return;
@@ -156,7 +172,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
             if (y1 > y2) [y1, y2] = [y2, y1];
             let hasDatainRange = hasYDataInXRange(data.filter(p => p[xkey] >= x1 && p[xkey] <= x2), y1, y2);
             if (hasDatainRange) {
-                //console.log("now zooming", zoomArea);
+                console.log("now zooming", zoomArea);
                 adjustDomain({ x1: x1, y1: y1, x2: x2, y2: y2 });
                 setIsZoomed(true);
             } else {
@@ -193,7 +209,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
                 ref={Linechartload}
             >
                 {children}
-                {ykeys.map(key => { return drawLine(key, aliases[key], strokeStyle[key]); })}
+                {ykeys.map((key, i) => { return drawLine(key, i, aliases[key], strokeStyle[key]); })}
                 <ReferenceArea
                     x1={zoomArea?.x1}
                     x2={zoomArea?.x2}
@@ -204,10 +220,10 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
                     allowEscapeViewBox={{ x: false, y: false }}
                     //content={<CustomTooltip xunit='Myr' yunit={yunit}/>}
                     //position={{ x: 760, y: 10 }}
-                    ref={ToolTip}                    
-                    formatter={value => <>{value.toFixed(4)} {yunit}</> } //worth a question: jsx can't be converted into string?
+                    ref={ToolTip}
+                    formatter={value => <>{value.toFixed(4)} {yunit}</>} //worth a question: jsx can't be converted into string?
                     //formatter={value => value.toFixed(4) + yunit } 
-                    labelFormatter={label => `Time : ${label} Myr`}
+                    labelFormatter={label => `Time : ${label.toFixed(4)} Myr`}
                     //animationDuration={1500}
                     filterNull={false}
                 />

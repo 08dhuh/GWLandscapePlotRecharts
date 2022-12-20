@@ -12,7 +12,7 @@ import {
   ReferenceArea
 } from "recharts";
 import propTypes from 'prop-types';
-import { tickExpFormatter } from "./Utils";
+import { tickExpFormatter } from "../components/Utils";
 
 // const scale = num => {
 //   return num.toExponential();

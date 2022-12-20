@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { length, mapLineData } from "./DataUtil";
+import DataUtil from "./DataUtil";
 import { tickExpFormatter } from "./Utils";
 import PlotLineZoom from "./PlotLineZoom";
 import {
@@ -12,38 +12,41 @@ import {
   } from "recharts";
 
 const aliases = {
-    semimajor: 'semi-major axis',
-    //eccentricity: 'eccentricity'
-    periapsis: 'periapsis',
-    radius_1: 'radius 1',
-    radius_2: 'radius 2',
-    roche_radius_1: 'roche radius 1',
-    roche_radius_2: 'roche radius 2',
-    time: 'time',
+    'Time': 'Time',
+    'Radius(1)': 'radius1',
+    'Radius(2)': 'radius 2',
+    'Radius(1)|RL': 'roche radius 1',
+    'Radius(2)|RL': 'roche radius 2',
+    'Periapsis': 'periapsis',
+    'SemiMajorAxis': 'semi-major axis',
 };
 const xDomain = ['auto', dataMax => (dataMax * 1.1)];
 const yDomain = ['auto', 'dataMax+1000'];
 
 const strokeStyle = {
-    semimajor: { stroke: 'black', strokeWidth: '2' },
-    periapsis: { stroke: 'black', strokeWidth: '2', strokeDasharray: "5 5" },
-    radius_1: { stroke: 'red', strokeWidth: '2' },
-    radius_2: { stroke: 'blue', strokeWidth: '2' },
-    roche_radius_1: { stroke: 'red', strokeDasharray: "5 5", strokeWidth: '2' },
-    roche_radius_2: { stroke: 'blue', strokeDasharray: "5 5", strokeWidth: '2' },
+    'SemiMajorAxis': { stroke: 'black', strokeWidth: '2' },
+    'Periapsis': { stroke: 'black', strokeWidth: '2', strokeDasharray: "5 5" },
+    'Radius(1)': { stroke: 'red', strokeWidth: '2' },
+    'Radius(2)': { stroke: 'blue', strokeWidth: '2' },
+    'Radius(1)|RL': { stroke: 'red', strokeDasharray: "5 5", strokeWidth: '2' },
+    'Radius(2)|RL': { stroke: 'blue', strokeDasharray: "5 5", strokeWidth: '2' },
 };
 
 const initialDomain = { x1: xDomain[0], x2: xDomain[1], y1: yDomain[0], y2: yDomain[1] };
-const xkey = 'time';
-const ykeys = Object.keys(aliases).filter(key => key !== 'time');
+const xkey = 'Time'; //'time';
+const ykeys = Object.keys(aliases).filter(key => key !== xkey);
 
 export default function RenderLengthContainer(props) {
     const { divStyle, syncId } = props;
     const [domain, setDomain] = useState(initialDomain);
-    const data = mapLineData(length);
+    const data = DataUtil(props.rawdata,'Length');
+
+    //const data = mapLineData(length); //(length)
+
     const adjustDomain = (area) => {
         setDomain(() => ({ x1: area.x1, x2: area.x2, y1: area.y1, y2: area.y2 }));
-      }
+    }
+
     return(<PlotLineZoom
         divStyle={divStyle}
         syncId={syncId}
