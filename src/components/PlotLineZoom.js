@@ -73,17 +73,13 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
     }, [isZoomed]);
     useEffect(() => {
         if (ToolTip.current) {
-            //console.log(Object.keys(ToolTip.current.props.payload[0]));
         }
     });
 
     const Line1 = useRef();
     const ToolTip = useRef();
 
-    // const showZoomBox =
-    //     isZooming &&
-    //     !(Math.abs(zoomArea.x1 - zoomArea.x2) < MIN_ZOOM) &&
-    //     !(Math.abs(zoomArea.y1 - zoomArea.y2) < MIN_ZOOM);
+
 
     const drawLine = (dataKey, alias = null, style, type = null, dot = false) => {
         if (dataKey === 'time') return;
@@ -96,7 +92,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
             dot={dot}
             ref={Line1 ? Line1 : null} //There should be new logic to get two datapoints from the plot
         />);
-        //{...(stroke?{stroke:stroke}:{})}
+
     }
 
     const handleZoomOUt = () => {
@@ -110,24 +106,13 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
         console.log(ToolTip.current);
 
         console.log("handleMouseDown called");
-        // console.log("chartX:", e.chartX);
-        // console.log("chartY:", e.chartY);
-        // console.log("scaletype", scaleType);
-        // console.log("translated Y value", translateCharttoCoord(e.chartY, yconst, scaleType));
-        //console.log("activePayload ",e.activePayload);
-       //console.log("activeTooltipIndex ", e.activeTooltipIndex);
         const { activeLabel, chartY } = e || {};
-        //console.log(xValue, yValue);
+
         if (!activeLabel || !chartY) return;
         setIsZooming(true);
         let xValue = activeLabel;
         let yValue = translateChartYtoCoordY(chartY, yconst, scaleType);
         setZoomArea({ x1: xValue, y1: yValue, x2: xValue, y2: yValue });
-        //comment out after testing  
-        // if (ToolTip.current) {
-        //     console.log(ToolTip.current.props);
-        // }    
-
     };
 
     const handleMouseMove = e => {
@@ -136,7 +121,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
             let xValue = activeLabel;
             let yValue = translateChartYtoCoordY(chartY, yconst, scaleType);
             setZoomArea((prev) => ({ ...prev, x2: xValue, y2: yValue }));
-            //console.log(zoomArea);
+
         }
     };
 
@@ -149,14 +134,13 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
 
     const handleMouseUp = e => {
         if (isZooming) {
-            //console.log("handleMouseUp called");
-            //console.log(zoomArea);
+
             let { x1, y1, x2, y2 } = zoomArea;
             if (x1 > x2) [x1, x2] = [x2, x1];
             if (y1 > y2) [y1, y2] = [y2, y1];
             let hasDatainRange = hasYDataInXRange(data.filter(p => p[xkey] >= x1 && p[xkey] <= x2), y1, y2);
             if (hasDatainRange) {
-                //console.log("now zooming", zoomArea);
+
                 adjustDomain({ x1: x1, y1: y1, x2: x2, y2: y2 });
                 setIsZoomed(true);
             } else {
@@ -202,22 +186,15 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
                 />
                 <Tooltip
                     allowEscapeViewBox={{ x: false, y: false }}
-                    //content={<CustomTooltip xunit='Myr' yunit={yunit}/>}
-                    //position={{ x: 760, y: 10 }}
-                    ref={ToolTip}                    
-                    formatter={value => <>{value.toFixed(4)} {yunit}</> } //worth a question: jsx can't be converted into string?
-                    //formatter={value => value.toFixed(4) + yunit } 
+
+                    ref={ToolTip}
+                    formatter={value => <>{value.toFixed(4)} {yunit}</>} //worth a question: jsx can't be converted into string?
+
                     labelFormatter={label => `Time : ${label} Myr`}
-                    //animationDuration={1500}
+
                     filterNull={false}
                 />
             </LineChart>
         </ResponsiveContainer>
     </div>);
 }
-
-
-    // const filterXData = (array, min, max) => {
-    //     let newarr = array.filter(p => p[xkey] >= min && p[xkey] <= max);
-    //     return newarr;
-    // }

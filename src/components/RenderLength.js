@@ -14,9 +14,6 @@ import {
 import propTypes from 'prop-types';
 import { tickExpFormatter } from "./Utils";
 
-// const scale = num => {
-//   return num.toExponential();
-// }
 
 const strokeStyle = {
   semimajor: { stroke: 'black', strokeWidth: '2' },
@@ -37,7 +34,6 @@ const getAxisYDomainOneDataset = (refData, ref, offset) => {
     if (d[ref] > top) top = d[ref];
     if (d[ref] < bottom) bottom = d[ref];
   });
-  //return [(bottom | 0) - offset, (top | 0) + offset];
   return [bottom - offset, top + offset];
 };
 
@@ -81,7 +77,6 @@ export default class RenderLength extends React.Component {
       {...style}
       dot={dot}
     />);
-    //{...(stroke?{stroke:stroke}:{})}
   }
 
   zoom() {
@@ -162,7 +157,6 @@ export default class RenderLength extends React.Component {
             console.log("chartY:", e.chartY);
           }}
           onMouseMove={(e) => this.state.refAreaLeft && this.setState({ refAreaRight: e.activeLabel })}
-          // eslint-disable-next-line react/jsx-no-bind
           onMouseUp={this.zoom.bind(this)}
         >
           <CartesianGrid strokeDasharray="3 3" />
@@ -184,7 +178,6 @@ export default class RenderLength extends React.Component {
             padding={{ bottom: 5 }}
             label={{ value: `Radius/R_\u{2299}`, angle: -90, position: 'insideLeft', textAnchor: 'middle', offset: -5 }} />
           <Tooltip formatter={(value, name) => {
-            //console.log(value,name);
             if (name === 'time') { return [`${value} Myr`, name]; }
             return [value, name];
           }}
@@ -199,7 +192,7 @@ export default class RenderLength extends React.Component {
     </div>);
   }
 }
-//<Legend wrapperStyle={{ paddingBottom: "20px" }} layout="vertical" align="right" verticalAlign="top" />
+
 RenderLength.propTypes = {
   data: propTypes.array.isRequired,
   datakeys: propTypes.object.isRequired,
