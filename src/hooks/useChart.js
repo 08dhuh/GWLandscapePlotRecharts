@@ -11,7 +11,4 @@ export const useChart = (initialDomain) => {
 };
 
 
-//import { useChart } from "../hooks/useChart";
 
-// const initialDomain = { x1: "auto", x2: "auto", y1: "auto", y2: "auto" };
-// const { domain, adjustDomain } = useChart(initialDomain);

@@ -38,6 +38,8 @@ const strokeStyle = {
   mass_HE_core1: { stroke: 'red', strokeDasharray: "1 1 3", strokeWidth: '2' },
   mass_HE_core2: { stroke: 'blue', strokeDasharray: "1 1 3", strokeWidth: '2' },
 };
+
+
 export default function RenderMassContainer(props) {
   const { divStyle, syncId } = props;
   const [domain, setDomain] = useState(initialDomain);

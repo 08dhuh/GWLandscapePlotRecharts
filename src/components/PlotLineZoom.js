@@ -7,38 +7,9 @@ import {
     Tooltip
 } from "recharts";
 
-const getTwoPoints = (array) => {
-    let point1 = { y: array[0].y, value: array[0].value };
-    let p = array.find(point => {
-        return point1.value === 0 ? point.value !== point1.value :
-            Math.abs((point.value - point1.value) / point1.value) > 1.1
-    });
-    let point2 = p ? { y: p.y, value: p.value } : null;
-    return point2 ? [point1, point2] : null;
-};
+import { useZoomHandler } from "../hooks/useZoomHandler";
+import { getTwoPoints, getYconstsLinear, getYconstsLog } from "../utils/chartUtils";
 
-const getYconstsLinear = (point1, point2) => {
-    let a = (point1.value - point2.value) / (point1.y - point2.y);
-    let b = point1.value - a * point1.y;
-    return [a, b];
-};
-
-const getYconstsLog = (point1, point2) => {
-    let a = (point1.y - point2.y) / Math.log10(point1.value / point2.value);
-    let b = point1.y - a * Math.log10(point1.value);
-    return [a, b];
-}
-
-const translateChartYtoCoordY = (chartY, yconst, scaleType) => {
-    if (yconst && scaleType === 'Linear') {
-        return yconst[0] * chartY + yconst[1];
-    }
-    if (yconst && scaleType === 'Log') {
-        return 10 ** ((chartY - yconst[1]) / yconst[0]);
-    }
-};
-
-const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
 
 export default function PlotLineZoom(props) { //should be passed x & y domain properties
     //adjustDomain: since x and y axes are called from the parent components
@@ -55,22 +26,40 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
         children,
         yunit } = props;
 
-    const [zoomArea, setZoomArea] = useState(DEFAULT_ZOOM);
-    const [isZooming, setIsZooming] = useState(false);
-    const [isZoomed, setIsZoomed] = useState(false);
-    const [yconst, setYconst] = useState(null);
-    const Linechartload = useCallback(line => {
-        if (line && Line1) {
-            let points = Line1.current.props.points;
-            //console.log(points);
-            let twopoints = getTwoPoints(points);
-            //console.log(twopoints);
-            if (scaleType === 'Linear') setYconst(getYconstsLinear(...twopoints));
-            if (scaleType === 'Log') setYconst(getYconstsLog(...twopoints));
-            //console.log(yconst);
-        }
 
-    }, [isZoomed]);
+    const [yconst, setYconst] = useState(null);
+    const { 
+        zoomArea,
+        isZoomed,
+        handleMouseDown,
+        handleMouseMove,
+        handleMouseUp,
+        handleZoomOut,
+    } = useZoomHandler({
+        data,
+        xkey,
+        adjustDomain,
+        initialDomain: initialState,
+        scaleType,
+        yconst,
+    });    
+
+
+    
+    const Linechartload = useCallback(() => {
+        if (!Line1?.current) return;
+        const points = Line1.current.props?.points;
+        if (!points) return;
+    
+        const twopoints = getTwoPoints(points);
+        if (twopoints) {
+            const [p1, p2] = twopoints;
+            const yConstants =
+                scaleType === "Linear" ? getYconstsLinear(p1, p2) : getYconstsLog(p1, p2);
+            setYconst(yConstants);
+        }
+    }, [scaleType]); 
+
     useEffect(() => {
         if (ToolTip.current) {
         }
@@ -78,7 +67,6 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
 
     const Line1 = useRef();
     const ToolTip = useRef();
-
 
 
     const drawLine = (dataKey, alias = null, style, type = null, dot = false) => {
@@ -95,68 +83,12 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
 
     }
 
-    const handleZoomOUt = () => {
-        setZoomArea(DEFAULT_ZOOM);
-        adjustDomain(initialState); //implement this
-        setIsZoomed(false);
-    };
-
-    const handleMouseDown = e => {
-        if (!e?.activeLabel) return;
-        console.log(ToolTip.current);
-
-        console.log("handleMouseDown called");
-        const { activeLabel, chartY } = e || {};
-
-        if (!activeLabel || !chartY) return;
-        setIsZooming(true);
-        let xValue = activeLabel;
-        let yValue = translateChartYtoCoordY(chartY, yconst, scaleType);
-        setZoomArea({ x1: xValue, y1: yValue, x2: xValue, y2: yValue });
-    };
-
-    const handleMouseMove = e => {
-        const { activeLabel, chartY } = e || {};
-        if (isZooming) {
-            let xValue = activeLabel;
-            let yValue = translateChartYtoCoordY(chartY, yconst, scaleType);
-            setZoomArea((prev) => ({ ...prev, x2: xValue, y2: yValue }));
-
-        }
-    };
-
-    const hasYDataInXRange = (xrangeData, minRange, maxRange) => {
-        return xrangeData.some(point => {
-            let datapoints = Object.values(point);
-            return datapoints.some(p => p >= minRange && p <= maxRange);
-        });
-    }
-
-    const handleMouseUp = e => {
-        if (isZooming) {
-
-            let { x1, y1, x2, y2 } = zoomArea;
-            if (x1 > x2) [x1, x2] = [x2, x1];
-            if (y1 > y2) [y1, y2] = [y2, y1];
-            let hasDatainRange = hasYDataInXRange(data.filter(p => p[xkey] >= x1 && p[xkey] <= x2), y1, y2);
-            if (hasDatainRange) {
-
-                adjustDomain({ x1: x1, y1: y1, x2: x2, y2: y2 });
-                setIsZoomed(true);
-            } else {
-                console.log("zoom cancel");
-            }
-            setIsZooming(false);
-            setZoomArea(DEFAULT_ZOOM);
-        }
-    }
-
     return (<div style={divStyle || {
         width: "973px",
         height: "400px",
         backgroundColor: "white"
     }}>
-        {isZoomed && <button onClick={handleZoomOUt}>Zoom Out</button>}
+        {isZoomed && <button onClick={handleZoomOut}>Zoom Out</button>}
 
         <ResponsiveContainer width="80%"
             height="100%">
