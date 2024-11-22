@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDataContext } from "../../context/DataContext";
-//import { vdhattr } from "../DataUtil";
 import './VanDenHeuvel.css';
 export default function VanDenHeuvel(props) {
 

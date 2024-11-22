@@ -10,7 +10,7 @@ import {
 
 import { length } from "./DataUtil";
 import { mapLineData } from "../utils/dataUtils";
-import { tickExpFormatter } from '../utils/utils';
+import { tickExpFormatter } from '../utils/hrUtils';
 import PlotLineZoom from "./PlotLineZoom";
 
 import { useChart } from "../hooks/useChart";

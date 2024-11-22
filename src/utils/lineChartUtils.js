@@ -44,5 +44,19 @@ export const tickExpFormatter = num => {
     ).join('');
     const [base, exponent] = num.toExponential().split('e').map(n => parseFloat(n));
     return base === 0 ? 0 : `${base === 1 ? '' : base + '×'}${10 + toSuper(exponent)}`;
-    //return (<>{{base}}<sup>{{exponent}}</sup></>);
+
 }
+
+
+// export const LineChartTooltip = (props) => {
+//     const { active, payload, label, xunit, yunit } = props;
+//     if (active && payload && payload.length) {
+//         return (
+//             <div>
+//                 <p>{`${label} ${xunit}`}</p>
+//                 {payload.map(p => <p>{`${p.value.toFixed(4)}`} {yunit}</p>)}
+//             </div>
+//         );
+//         //
+//     }
+// }

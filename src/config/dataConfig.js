@@ -84,11 +84,10 @@ const units = {
     length: <>R<sub>&#8857;</sub></>,
 };
 
-//const fallbackDataPath = process.env.REACT_APP_FALLBACK_DATA_PATH || "/data.json";
-const serverDataPath = "/data.json";
+const fallbackDataPath = process.env.REACT_APP_FALLBACK_DATA_PATH || "/data.json";
+const serverDataPath = process.env.REACT_APP_SERVER_DATA_PATH || fallbackDataPath;
 
 export { attributeMappings, 
   aliases,
     units, 
-    //fallbackDataPath, 
     serverDataPath  };

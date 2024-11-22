@@ -1,4 +1,3 @@
-// DataUtil.js
 import { attributeMappings, aliases } from "../config/dataConfig";
 
 const processData = (data, type) => {
@@ -7,7 +6,7 @@ const processData = (data, type) => {
     //console.log(attr);
 
     const rawData = extractData(data, attr);
-    //console.log(rawData);
+
     switch (type) {
         case 'vdh':
             return rawData;
@@ -22,10 +21,7 @@ const processData = (data, type) => {
 
             throw new Error(`Unsupported type: ${type}`);
     }
-
-
 };
-
 
 const extractData = (data, mapping) => {
     const processed = {};
@@ -68,22 +64,5 @@ const mapScatterData = (dataset, aliases) => {
     });
     return [data1, data2];
 };
-
-// const mapLineDataforScatterChart = (dataset, ykey, aliases = null) => {
-//     let data_total = {};
-//     let objkeys = aliases ? Object.keys(aliases) : Object.keys(dataset);
-//     objkeys.forEach((key) => {
-//         if (key === 'time') return;
-//         let data = [];
-//         let datakey = key;
-//         dataset.time.forEach((t, i) => {
-//             let obj = { time: t };
-//             obj[ykey] = dataset[key][i];
-//             data.push(obj);
-//         });
-//         data_total[datakey] = data;
-//     });
-//     return data_total;
-// };
 
 export { processData };

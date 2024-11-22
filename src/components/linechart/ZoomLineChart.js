@@ -8,10 +8,10 @@ import {
 } from "recharts";
 
 import { useZoomHandler } from "../../hooks/useZoomHandler";
-import { getTwoPoints, getYconstsLinear, getYconstsLog } from "../../utils/chartUtils";
+import { getTwoPoints, getYconstsLinear, getYconstsLog } from "../../utils/lineChartUtils";
 
 
-export default function PlotLineZoom(props) { //should be passed x & y domain properties
+export default function ZoomLineChart(props) { //should be passed x & y domain properties
     //adjustDomain: since x and y axes are called from the parent components
     const { divStyle,
         syncId,
@@ -120,7 +120,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
                     allowEscapeViewBox={{ x: false, y: false }}
 
                     ref={ToolTip}
-                    formatter={value => <>{value.toFixed(4)} {yunit}</>} //worth a question: jsx can't be converted into string?
+                    formatter={value => <>{value.toFixed(4)} {yunit}</>}
 
                     labelFormatter={label => `Time : ${label} Myr`}
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { translateChartYtoCoordY, hasYDataInXRange } from "../utils/chartUtils";
+import { translateChartYtoCoordY, hasYDataInXRange } from "../utils/lineChartUtils";
 
 const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
 

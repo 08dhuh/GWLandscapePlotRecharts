@@ -7,7 +7,7 @@ import {
   Label,
 } from "recharts";
 
-import PlotLineZoom from "./PlotLineZoom";
+import ZoomLineChart from "./ZoomLineChart";
 import { useDataContext } from "../../context/DataContext";
 import { useChart } from "../../hooks/useChart";
 import { getLineChartConfig } from "../../config/lineChartConfig";
@@ -32,7 +32,7 @@ export default function RenderLineChartContainer({ chartType, divStyle, syncId }
   const { initialDomain, domain, adjustDomain } = useChart(domains.x, domains.y);
 
   return (
-    <PlotLineZoom
+    <ZoomLineChart
       divStyle={divStyle}
       syncId={syncId}
       data={data} 
@@ -75,7 +75,7 @@ export default function RenderLineChartContainer({ chartType, divStyle, syncId }
         />
       </YAxis>
       <Legend layout="vertical" align="right" verticalAlign="top" />
-    </PlotLineZoom>
+    </ZoomLineChart>
   );
 }
 

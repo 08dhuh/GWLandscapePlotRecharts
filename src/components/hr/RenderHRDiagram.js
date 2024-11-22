@@ -7,66 +7,52 @@ import {
     Legend,
     ResponsiveContainer,
     Label,
-    ReferenceLine,
-    //ReferenceLineProps,
     ScatterChart,
     Scatter,
     ZAxis,
     ReferenceArea,
 } from "recharts";
 import propTypes from 'prop-types';
-import { filterData, tickExpFormatter, getReferenceLineSegment, getReferenceRangeType } from '../../utils/utils';
-import { units } from "../../config/dataConfig";
+import { filterData, tickExpFormatter, getReferenceRangeType, drawReferenceLine } from '../../utils/hrUtils';
+import { hrConfig } from "../../config/hrConfig";
+// import { units } from "../../config/dataConfig";
 
 
 const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
-const xDomain = [1000, 10e6];
-const yDomain = [10e-11, 10e6];
-const radii = [ 1e-9,  1e-6,  0.001, 1,  1000, ];
+// const xDomain = [1000, 10e6];
+// const yDomain = [10e-11, 10e6];
+// const radii = [ 1e-9,  1e-6,  0.001, 1,  1000, ];
 
-const initialState = {
-    left: xDomain[0],
-    right: xDomain[1],
-    refAreaLeft: '',
-    refAreaRight: '',
-    bottom: yDomain[0],
-    top: yDomain[1],
-    animation: false,
-};
+// const initialState = {
+//     left: xDomain[0],
+//     right: xDomain[1],
+//     refAreaLeft: '',
+//     refAreaRight: '',
+//     bottom: yDomain[0],
+//     top: yDomain[1],
+//     animation: false,
+// };
 
-const Rformatter = props => {
-    // const superscript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
-    // const minus = '⁻';
-    // const toSuper = n => `${n}`.split('').map(m =>
-    //     m === '-' ? minus : superscript[m]
-    // ).join('');
-    const [base, exponent] = props.num.toExponential().split('e').map(n => parseFloat(n));
-    //return <>R<sub>&#8857;</sub><sup>exponent</sup></>;
-    return exponent;
-}
 
 export default function RenderHRDiagram(props) {
     const { divStyle, syncId, data1, data2 } = props;
     const [filteredData1, setFilteredData1] = useState([...data1]);
     const [filteredData2, setFilteredData2] = useState([...data2]);
+    const { domains, radii, xticks, initialState, tooltipFormatter} = hrConfig;
+    const {x:xDomain, y:yDomain} = domains;
+
+
     const [zoomArea, setZoomArea] = useState(DEFAULT_ZOOM);
     const [isZooming, setIsZooming] = useState(false);
     const isZoomed = filteredData1?.length !== data1?.length || filteredData2?.length !== data2?.length;
     //const {left, right, top, bottom} = initialState;
+
+
     const [left, setLeft] = useState(initialState.left);
     const [right, setRight] = useState(initialState.right);
     const [top, setTop] = useState(initialState.top);
     const [bottom, setBottom] = useState(initialState.bottom);
 
-    const drawReferenceLine = (R, xDomain, yDomain, style = null) => {
-        return <ReferenceLine
-            label={`${R} R_sun`}
-            stroke="gray"
-            strokeDasharray="3 3"
-            position="start"
-            segment={getReferenceLineSegment(R, xDomain, yDomain)} 
-            />;
-    }
 
     const handleZoomOUt = () => {
         setFilteredData1([...data1]);
@@ -152,7 +138,8 @@ export default function RenderHRDiagram(props) {
                     domain={[left, right]}
                     tickCount={4}
                     tickFormatter={tickExpFormatter}
-                    ticks={[1000, 10000, 100000, 1000000]}
+                    ticks={xticks}
+                    // ticks={[1000, 10000, 100000, 1000000]}
                 >
                     <Label value="Temperature(K)" position="bottom" offset={0} />
                 </XAxis>
@@ -179,7 +166,7 @@ export default function RenderHRDiagram(props) {
                 />
                 <Tooltip
                     cursor={{ strokeDasharray: '3 3' }}
-                    formatter={HRTooltipFormatter}
+                    formatter={tooltipFormatter}
                 />
                 <Legend wrapperStyle={{ paddingLeft: "40px" }} layout="vertical" align="right" verticalAlign="top" />
 
@@ -209,14 +196,14 @@ export default function RenderHRDiagram(props) {
         </ResponsiveContainer>
     </div>);
 }
-const HRTooltipFormatter = (value, name) => {
-    return <>{value} {units[name]}</>;
-}
-
-
-// RenderHRDiagram.propTypes = {
-//     data1: propTypes.array.isRequired,
-//     data2: propTypes.array.isRequired,
-//     syncId: propTypes.string,
+// const HRTooltipFormatter = (value, name) => {
+//     return <>{value} {units[name]}</>;
 // }
+
+
+RenderHRDiagram.propTypes = {
+    data1: propTypes.array.isRequired,
+    data2: propTypes.array.isRequired,
+    syncId: propTypes.string,
+}
 
