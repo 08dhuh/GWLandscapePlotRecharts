@@ -8,15 +8,15 @@ import {
     ResponsiveContainer,
     Label,
     ReferenceLine,
-    ReferenceLineProps,
+    //ReferenceLineProps,
     ScatterChart,
     Scatter,
     ZAxis,
     ReferenceArea,
 } from "recharts";
 import propTypes from 'prop-types';
-import { filterData, tickExpFormatter, getReferenceLineSegment, getReferenceRangeType } from '../utils/Utils';
-import { units } from './DataUtil';
+import { filterData, tickExpFormatter, getReferenceLineSegment, getReferenceRangeType } from '../../utils/utils';
+import { units } from "../../config/dataConfig";
 
 
 const DEFAULT_ZOOM = { x1: null, y1: null, x2: null, y2: null };
@@ -214,9 +214,9 @@ const HRTooltipFormatter = (value, name) => {
 }
 
 
-RenderHRDiagram.propTypes = {
-    data1: propTypes.array.isRequired,
-    data2: propTypes.array.isRequired,
-    syncId: propTypes.string,
-}
+// RenderHRDiagram.propTypes = {
+//     data1: propTypes.array.isRequired,
+//     data2: propTypes.array.isRequired,
+//     syncId: propTypes.string,
+// }
 

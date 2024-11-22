@@ -1,13 +1,5 @@
 import data from "../data/data.json";
 
-const units = {
-    time: 'Myr',
-    Temperature: 'K',
-    Luminosity: <>L<sub>&#8857;</sub></>,
-    mass: <>M<sub>&#8857;</sub></>,
-    length: <>R<sub>&#8857;</sub></>
-}
-
 const mass = {
     totalMass1: data.totalMass1,
     totalMass2: data.totalMass2,
@@ -58,50 +50,11 @@ const vdhattr = {
     Z1: data.Z1
 }
 
-const mapLineData = (dataset, keys = null) => {
-    let data = [];
-    dataset.time.forEach((_, i) => {
-        let obj = {};
-        let objkeys = keys ? Object.keys(keys) : Object.keys(dataset);
-        objkeys.forEach(key => { keys ? obj[keys[key]] = dataset[key][i] : obj[key] = dataset[key][i] });
-        data.push(obj);
-    });
-    return data;
-}
+// export { 
 
-const mapScatterData = (dataset, aliases) => { //has two separate datasets
-    let data1=[];
-    let data2=[];
-    let objkeys = Object.keys(aliases);
-    dataset.time.forEach((t,i) => {
-        let obj1 = {time: t};
-        let obj2 = {time: t}
-        objkeys.forEach(key=> {
-            let datakey = aliases[key];
-            key.includes('1') ? obj1[datakey] = dataset[key][i] : obj2[datakey] = dataset[key][i];
-        });
-        data1.push(obj1);
-        data2.push(obj2);
-    });
-    return [data1, data2];
-}
+//     mass, 
+//     length, 
+//     hrattr, 
+//     vdhattr, 
 
-const mapLineDataforScatterChart = (dataset, ykey, aliases=null) => {
-    let data_total = {};
-    let objkeys = aliases? Object.keys(aliases) : Object.keys(dataset); 
-    objkeys.forEach(key=> {
-        if (key==='time') return;
-        let data = []; //data to be pushed into data_total
-        //let datakey = aliases? aliases[key] : key; //if aliases is provided it will be entry
-        let datakey = key;
-        dataset.time.forEach((t,i) => {
-            let obj = {time: t};
-            obj[ykey] = dataset[key][i];
-            data.push(obj);
-        });
-        data_total[datakey] = data;
-    });
-    return data_total;
-}
-
-export { units, mass, length, hrattr, vdhattr, mapLineData, mapScatterData, mapLineDataforScatterChart};
+// };

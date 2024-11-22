@@ -1,53 +1,65 @@
 import React, { useState } from "react";
-import { mapLineData, units } from "./DataUtil";
-import { mass } from "../data/dataset";
-import propTypes from 'prop-types';
 import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  //Tooltip,
   Legend,
   Label,
 } from "recharts";
+//import { mapLineData } from "../utils/dataUtils";
+//import { mass } from "../data/dataset";
+
+
 import PlotLineZoom from "./PlotLineZoom";
+import { useDataContext } from "../context/DataContext";
+import { useChart } from "../hooks/useChart";
+
+import { units } from "../config/dataConfig";
+//import { aliases, strokeStyles } from "../config/lineChartConfig";
+import propTypes from 'prop-types';
+
+// const xDomain = ['auto', dataMax => (dataMax * 1.1)];
+// const yDomain = ['auto', 'dataMax'];
+// const initialDomain = { x1: xDomain[0], x2: xDomain[1], y1: yDomain[0], y2: yDomain[1] };
+// const aliases = {
+//   totalMass1: 'Mass1',
+//   totalMass2: 'Mass2',
+//   systemMass: 'System Mass',
+//   mass_CO_core1: 'CO core1',
+//   mass_CO_core2: 'CO core2',
+//   mass_HE_core1: 'HE core1',
+//   mass_HE_core2: 'HE core2',
+//   time: 'time',
+// };
 
 
-const xDomain = ['auto', dataMax => (dataMax * 1.1)];
-const yDomain = ['auto', 'dataMax'];
-const initialDomain = { x1: xDomain[0], x2: xDomain[1], y1: yDomain[0], y2: yDomain[1] };
-const aliases = {
-  totalMass1: 'Mass1',
-  totalMass2: 'Mass2',
-  systemMass: 'System Mass',
-  mass_CO_core1: 'CO core1',
-  mass_CO_core2: 'CO core2',
-  mass_HE_core1: 'HE core1',
-  mass_HE_core2: 'HE core2',
-  time: 'time',
-};
-const xkey = 'time';
-const ykeys = Object.keys(aliases).filter(key => key !== 'time');
-
-const strokeStyle = {
-  totalMass1: { stroke: 'red', strokeWidth: '2' },
-  totalMass2: { stroke: 'blue', strokeWidth: '2' },
-  systemMass: { stroke: 'black', strokeWidth: '2' },
-  mass_CO_core1: { stroke: 'red', strokeDasharray: "5 5", strokeWidth: '2' },
-  mass_CO_core2: { stroke: 'blue', strokeDasharray: "5 5", strokeWidth: '2' },
-  mass_HE_core1: { stroke: 'red', strokeDasharray: "1 1 3", strokeWidth: '2' },
-  mass_HE_core2: { stroke: 'blue', strokeDasharray: "1 1 3", strokeWidth: '2' },
-};
+// const strokeStyle = {
+//   totalMass1: { stroke: 'red', strokeWidth: '2' },
+//   totalMass2: { stroke: 'blue', strokeWidth: '2' },
+//   systemMass: { stroke: 'black', strokeWidth: '2' },
+//   mass_CO_core1: { stroke: 'red', strokeDasharray: "5 5", strokeWidth: '2' },
+//   mass_CO_core2: { stroke: 'blue', strokeDasharray: "5 5", strokeWidth: '2' },
+//   mass_HE_core1: { stroke: 'red', strokeDasharray: "1 1 3", strokeWidth: '2' },
+//   mass_HE_core2: { stroke: 'blue', strokeDasharray: "1 1 3", strokeWidth: '2' },
+// };
 
 
 export default function RenderMassContainer(props) {
+  const {data} = useDataContext();
+  const alias = aliases.mass;
+  const strokeStyle = strokeStyles.mass;
+  const xDomain = ['auto', dataMax => (dataMax * 1.1)];
+  const yDomain = ['auto', 'dataMax'];
+  const xkey = 'time';
+  const ykeys = Object.keys(alias).filter(key => key !== 'time');
   const { divStyle, syncId } = props;
-  const [domain, setDomain] = useState(initialDomain);
-  const data = mapLineData(mass);
-
-  const adjustDomain = (area) => {
-    setDomain(() => ({ x1: area.x1, x2: area.x2, y1: area.y1, y2: area.y2 }));
-  }
+  //const [domain, setDomain] = useState(initialDomain);
+  //const data = mapLineData(mass);
+  const {initialDomain, domain, adjustDomain} = useChart(xDomain, yDomain);
+  // const adjustDomain = (area) => {
+  //   setDomain(() => ({ x1: area.x1, x2: area.x2, y1: area.y1, y2: area.y2 }));
+  // }
 
 
   return (<PlotLineZoom
@@ -59,7 +71,7 @@ export default function RenderMassContainer(props) {
     initialState={initialDomain}
     adjustDomain={adjustDomain}
     strokeStyle={strokeStyle}
-    aliases={aliases}
+    alias={alias}
     scaleType='Linear'
     yunit={units.mass}
     >

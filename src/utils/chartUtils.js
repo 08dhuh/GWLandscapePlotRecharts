@@ -33,3 +33,16 @@ export const hasYDataInXRange = (xrangeData, minY, maxY) => {
         return Object.values(point).some((value) => value >= minY && value <= maxY);
     });
 };
+
+export const tickDecimalFormatter = f => f.toFixed(2);
+
+export const tickExpFormatter = num => {
+    const superscript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+    const minus = '⁻';
+    const toSuper = n => `${n}`.split('').map(m =>
+        m === '-' ? minus : superscript[m]
+    ).join('');
+    const [base, exponent] = num.toExponential().split('e').map(n => parseFloat(n));
+    return base === 0 ? 0 : `${base === 1 ? '' : base + '×'}${10 + toSuper(exponent)}`;
+    //return (<>{{base}}<sup>{{exponent}}</sup></>);
+}

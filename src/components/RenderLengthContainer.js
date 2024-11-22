@@ -3,15 +3,17 @@ import {
     XAxis,
     YAxis,
     CartesianGrid,
-    Tooltip,
+    //Tooltip,
     Legend,
     Label
   } from "recharts";
 
-import { length, mapLineData } from "./DataUtil";
-import { tickExpFormatter } from '../utils/Utils';
+import { length } from "./DataUtil";
+import { mapLineData } from "../utils/dataUtils";
+import { tickExpFormatter } from '../utils/utils';
 import PlotLineZoom from "./PlotLineZoom";
 
+import { useChart } from "../hooks/useChart";
 
 
 const aliases = {

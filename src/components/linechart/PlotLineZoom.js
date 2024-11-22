@@ -7,8 +7,8 @@ import {
     Tooltip
 } from "recharts";
 
-import { useZoomHandler } from "../hooks/useZoomHandler";
-import { getTwoPoints, getYconstsLinear, getYconstsLog } from "../utils/chartUtils";
+import { useZoomHandler } from "../../hooks/useZoomHandler";
+import { getTwoPoints, getYconstsLinear, getYconstsLog } from "../../utils/chartUtils";
 
 
 export default function PlotLineZoom(props) { //should be passed x & y domain properties
@@ -21,7 +21,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
         initialState,
         adjustDomain,
         strokeStyle,
-        aliases,
+        alias,
         scaleType,
         children,
         yunit } = props;
@@ -109,7 +109,7 @@ export default function PlotLineZoom(props) { //should be passed x & y domain pr
                 ref={Linechartload}
             >
                 {children}
-                {ykeys.map(key => { return drawLine(key, aliases[key], strokeStyle[key]); })}
+                {ykeys.map(key => { return drawLine(key, alias[key], strokeStyle[key]); })}
                 <ReferenceArea
                     x1={zoomArea?.x1}
                     x2={zoomArea?.x2}
