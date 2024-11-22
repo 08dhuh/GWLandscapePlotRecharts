@@ -1,70 +1,55 @@
-# Getting Started with Create React App
+# Interactive Graphs for GWLandscape
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This repository contains a collection of **interactive graph components** developed as a part of the **GWLandscape Project**. These components are designed to visualise astrophysical phenomena with a focus on **Binary Black Hole (BBH) mergers**. By migrating computationally heavy plotting methods to the front-end, the repository provides real-time, physics-accurate, and highly interactive visualisations.
 
-In the project directory, you can run:
+## Key Features
 
-### `npm start`
+### Visualisation of Binary Black Hole Mergers
+- Migrated plotting methods from back-end to front-end modules for enhanced performance and responsiveness.  
+- Enabled real-time interactive displays of astrophysical events, including:
+  - **Mass transfer events**.  
+  - **Stellar evolution stages** (e.g., core collapse and mass loss).  
+- Interactive plots that dynamically and accurately represent BBH merger physics.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Scalable React Component Architecture
+- Designed and structured React components for scalability and maintainability.  
+- Developed a modular architecture that supports:  
+  - Future extensions for astrophysical models.  
+  - Seamless integration with the **GWLandscape Project's main code base**.  
+  - Enhanced user experience through responsive and intuitive interfaces.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Components in the Repository
 
-### `npm test`
+This repository provides a diverse set of React components, including:  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Line Chart Visualisers**  
+   - Depict properties such as **mass transfer rates** and **orbital separations**.  
 
-### `npm run build`
+2. **HR Diagram Renderer**  
+   - Visualises stellar properties like **luminosity** and **effective temperature**.  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. **Van Den Heuvel Model Viewer**  
+   - A unique tool for exploring specific BBH formation scenarios.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Use Cases
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The interactive graph repository is an essential tool for:  
+- **Astrophysicists** studying BBH formation channels.  
+- **Researchers** visualising stellar evolution and binary merger stages.  
+- **Educators** demonstrating astrophysical phenomena with intuitive and interactive displays.  
 
-### `npm run eject`
+## Development Notes
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This repository follows modern React development best practices, including:  
+- **State management** with the Context API and custom hooks.  
+- **Responsive designs** powered by Recharts and CSS modules.  
+- A **scalable component architecture** designed for future enhancements.  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Main GWLandscape Project
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+For more details about the main GWLandscape project and other related repositories, visit the **[GWLandscape Main Organisation on GitHub](https://github.com/gravitationalwavedc)**.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Contact
+For any questions or collaboration opportunities, please raise an issue or contact the project team.
