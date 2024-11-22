@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { vdhattr } from "./DataUtil";
+import { useDataContext } from "../../context/DataContext";
 import './VanDenHeuvel.css';
 export default function VanDenHeuvel(props) {
+
+    const { dataBank } = useDataContext();
+    const vdhattr = dataBank['vdh'];
+
     const [imageIndex, setImageIndex] = useState(null);
     const [eventSequenceIndex, setEventSequenceIndex] = useState(null);
     const [eventString, setEventString] = useState(null);
@@ -39,7 +43,7 @@ export default function VanDenHeuvel(props) {
 
         //iterate through time sequence
         for (let i = 0; i < vdhattr.time.length; i++) {
-            if (i == 0) continue;
+            if (i === 0) continue;
             //if (isMerger) break;
 
             let stype1 = vdhattr.Stellar_Type1[i];
@@ -60,6 +64,7 @@ export default function VanDenHeuvel(props) {
                             image_num = 44;
                             setRotateImage((prev) => ({ ...prev, image_num: true }));
                         }
+                        break;
                     case 2:
                         eventstring = `Stable mass transfer from 2 to 1`;
                         if (stype2 < 13) {
@@ -177,7 +182,7 @@ export default function VanDenHeuvel(props) {
         //rotate image here
         if (!imageIndex) return (<div className="cartoon"></div>);
         const filepath = `/vanDenHeuvel_figures/${imageIndex}.png`;
-        return (<div className="cartoon"><img src={filepath} /></div>);
+        return (<div className="cartoon"><img src={filepath} alt="van den heuvel figures"/></div>);
     }
 
     const bebold = input => <b className="bold">{input}</b>;
@@ -199,57 +204,3 @@ export default function VanDenHeuvel(props) {
             {imageIndex[i] && descDiv(index, i)}</div></>)}
     </div>);
 }
-
-/*
-  if image_num is not None:
-            self.eventImage = self.getEventImage(image_num, rotate_image)
-
-        return eventString
-
-    def getEventImage(self, image_num, rotate_image):
-        """
-        Map the eventClass and possibly eventSubClass, with information
-        on the stellar types, to get the van den Heuvel diagrams.
-        """
-
-        self.imgFile = compasRootDir + '/utils/media/vanDenHeuvel_figures/{}.png'.format(image_num)
-        img = plt.imread(self.imgFile)  # import image
-        if rotate_image:
-            img = img[:, ::-1, :]  # flip across y-axis
-        return img
-
-def plotVanDenHeuvel(events=None):
-    # Only want events with an associated image
-    events = [event for event in events if (event.eventImage is not None)]
-    num_events = len(events)
-    fig, axs = plt.subplots(num_events, 1)
-    if num_events == 1:
-        axs = [axs]
-    fig.set_figwidth(9)
-    plt.rcParams["text.usetex"] = True  # Use latex
-
-    for ii in range(num_events):
-        img = events[ii].eventImage
-        axs[ii].imshow(img)
-        axs[ii].set_xticks([])
-        axs[ii].set_yticks([])
-        axs[ii].yaxis.set_label_position("right")
-        plt.subplots_adjust(hspace=0)
-
-        if ii == 0:
-            pltString = "$t$ = {:.1f} Myr, $a$ = {:.1f} $R_\odot$ \n" \
-                        " $M_1$ = {:.1f} $M_\odot$, $M_2$ = {:.1f} $M_\odot$ \n" \
-                        + events[ii].eventString
-            pltString = pltString.format(events[ii].time, events[ii].a, events[ii].m1, events[ii].m2)
-        else:
-            pltString = "$t$ = {:.1f} Myr, $a$ = {:.1f} to {:.1f} $R_\odot$ \n" \
-                        " $M_1$ = {:.1f} to {:.1f} $M_\odot$, $M_2$ = {:.1f} to {:.1f} $M_\odot$ \n" \
-                        + events[ii].eventString
-            pltString = pltString.format(events[ii].time, events[ii].aprev, events[ii].a, events[ii].m1prev,
-                                         events[ii].m1, events[ii].m2prev, events[ii].m2)
-
-        pad = 5
-        axs[ii].annotate(pltString, xy=(0, 0.5), xytext=(-axs[ii].yaxis.labelpad + pad, 0),
-                         xycoords=axs[ii].yaxis.label, fontsize=8, textcoords='offset points', ha='left', va='center')
-        axs[ii].annotate(chr(ord('@') + 1 + ii), xy=(-0.15, 0.8), xycoords='axes fraction', fontsize=8,
-                         fontweight='bold') */

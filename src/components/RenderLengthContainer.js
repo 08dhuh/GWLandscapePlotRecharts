@@ -1,15 +1,20 @@
 import React, {useState} from "react";
-import { length, mapLineData } from "./DataUtil";
-import { tickExpFormatter } from "./Utils";
-import PlotLineZoom from "./PlotLineZoom";
 import {
     XAxis,
     YAxis,
     CartesianGrid,
-    Tooltip,
+    //Tooltip,
     Legend,
     Label
   } from "recharts";
+
+import { length } from "./DataUtil";
+import { mapLineData } from "../utils/dataUtils";
+import { tickExpFormatter } from '../utils/hrUtils';
+import PlotLineZoom from "./PlotLineZoom";
+
+import { useChart } from "../hooks/useChart";
+
 
 const aliases = {
     semimajor: 'semi-major axis',
@@ -57,7 +62,7 @@ export default function RenderLengthContainer(props) {
         scaleType='Log'
         yunit={<>R<sub>&#8857;</sub></>} >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
+        {<XAxis
             allowDataOverflow
             type="number"
             scale='time'
@@ -67,7 +72,7 @@ export default function RenderLengthContainer(props) {
             unit=""
             tickFormatter={f => f.toFixed(2)}>
             <Label value="Time(Myr)" position="bottom" offset={0} />
-        </XAxis>
+        </XAxis>}
         <YAxis
             allowDataOverflow
             scale='log'
@@ -80,25 +85,3 @@ export default function RenderLengthContainer(props) {
 
     </PlotLineZoom>);
 }
-// class RenderLengthContainer extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             data: mapLineData(length),// aliases),
-//             datakeys: aliases
-//         };
-//     }
-
-//     render() {
-        
-//         // return <RenderLength 
-//         // data={this.state.data} 
-//         // datakeys={this.state.datakeys} 
-//         // syncId={this.props.syncId}
-//         // />;
-//     }
-// }
-
-// RenderLengthContainer.propTypes = {
-//     syncId: propTypes.string,
-// }

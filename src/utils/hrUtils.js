@@ -1,3 +1,4 @@
+import { ReferenceLine } from "recharts";
 const filterScatterData = (data, xlabel, ylabel, x1, x2, y1, y2) => {
     return data.filter(d => d[xlabel] >= x1 && d[xlabel] <= x2 && d[ylabel] >= y1 && d[ylabel] <= y2);
 };
@@ -15,18 +16,7 @@ const tickExpFormatter = num => {
 }
 
 
-const LineChartTooltip = (props) => {
-    const { active, payload, label, xunit, yunit } = props;
-    if (active && payload && payload.length) {
-        return (
-            <div>
-                <p>{`${label} ${xunit}`}</p>
-                {payload.map(p => <p>{`${p.value.toFixed(4)}`} {yunit}</p>)}
-            </div>
-        );
-        //
-    }
-}
+
 
 const getLuminosity = (radius, temperature, Tsol=NaN) => {
     Tsol = Tsol || 6e3;
@@ -68,12 +58,23 @@ const getReferenceLineSegment = (R, xDomain, yDomain) => {
     return segment;
 }
 
+const drawReferenceLine = (R, xDomain, yDomain, style = null) => {
+    return <ReferenceLine
+        label={`${R} R_sun`}
+        stroke="gray"
+        strokeDasharray="3 3"
+        position="start"
+        segment={getReferenceLineSegment(R, xDomain, yDomain)} 
+        />;
+}
+
 export {
     filterScatterData as filterData,
     tickExpFormatter,
-    LineChartTooltip as CustomTooltip,
-    getLuminosity,
-    getTemperature,
-    getReferenceLineSegment,
-    getReferenceRangeType
+
+    //getLuminosity,
+    //getTemperature,
+    //getReferenceLineSegment,
+    getReferenceRangeType,
+    drawReferenceLine
 };
